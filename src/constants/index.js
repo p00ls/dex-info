@@ -1,4 +1,5 @@
-export const FACTORY_ADDRESS = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
+export const FACTORY_ADDRESS = process.env.REACT_APP_FACTORY_ADDRESS
+export const WETH_ADDRESS = process.env.REACT_APP_WETH_ADDRESS
 
 export const BUNDLE_ID = '1'
 
