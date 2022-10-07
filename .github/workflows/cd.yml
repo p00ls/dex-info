@@ -1,0 +1,36 @@
+name: Deploy to k8s
+on:
+  workflow_call:
+    inputs:
+      channel_id:
+        description: channel id
+        required: false
+        type: string
+      project_id:
+        required: true
+        type: string
+      target:
+        required: true
+        type: string
+    secrets:
+      firebase_service_account:
+        required: true
+      repo_token:
+        required: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.repo_token }}'
+          firebaseServiceAccount: '${{ secrets.firebase_service_account }}'
+          projectId: '${{ inputs.project_id }}'
+          channelId: ${{ inputs.channel_id }}
+          target: '${{ inputs.target }}'
