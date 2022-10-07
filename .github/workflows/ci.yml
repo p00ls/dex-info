@@ -55,7 +55,7 @@ jobs:
     uses: ./.github/workflows/cd.yml
     with:
       project_id: prj-zzf-p-dex-846e
-      target: p00ls-dex-info-devel
+      target: dex-info
     secrets:
       firebase_service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRJ_ZZF_P_DEX_846E }}
       repo_token: '${{ secrets.GITHUB_TOKEN }}'
@@ -67,7 +67,7 @@ jobs:
     with:
       channel_id: live
       project_id: prj-zzf-p-dex-846e
-      target: p00ls-dex-info-devel
+      target: dex-info
     secrets:
       firebase_service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRJ_ZZF_P_DEX_846E }}
       repo_token: '${{ secrets.GITHUB_TOKEN }}'
