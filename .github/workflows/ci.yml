@@ -56,7 +56,7 @@ jobs:
     with:
       project_id: prj-zzf-p-dex-846e
       target: dex-info
-      channel_id: preview
+      channel_id: staging
     secrets:
       firebase_service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRJ_ZZF_P_DEX_846E }}
       repo_token: '${{ secrets.GITHUB_TOKEN }}'
