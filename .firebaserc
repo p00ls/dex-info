@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "prj-zzf-p-dex-846e"
+  },
+  "targets": {
+    "prj-zzf-p-dex-846e": {
+      "hosting": {
+        "dex-info": [
+          "p00ls-dex-info-devel"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
