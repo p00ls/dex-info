@@ -63,6 +63,31 @@ function customFilter(option, searchText) {
   return option.data.label.toString().toLowerCase().includes(searchText.toString().toLowerCase())
 }
 
+const DropdownIndicator = () => (
+  <span role="img" aria-label={'viewer'} style={{ marginRight: '8px' }}>
+    🔎
+  </span>
+)
+
+const Menu = ({ children, innerRef, innerProps }) => {
+  return (
+    <CustomMenu ref={innerRef} {...innerProps}>
+      <FixedToggle>
+        <input
+          name="isGoing"
+          type="checkbox"
+          checked={capEth}
+          onChange={() => {
+            setCapEth(!capEth)
+          }}
+        />
+        Hide Low Liquidity
+      </FixedToggle>
+      {children}
+    </CustomMenu>
+  )
+}
+
 const Select = ({ options, onChange, setCapEth, capEth, tokenSelect = false, placeholder, ...rest }) => {
   return tokenSelect ? (
     <ReactSelect
@@ -80,31 +105,7 @@ const Select = ({ options, onChange, setCapEth, capEth, tokenSelect = false, pla
       )}
       styles={isMobile ? customStylesMobile : customStyles}
       {...rest}
-      components={{
-        DropdownIndicator: () => (
-          <span role="img" aria-label={'viewer'} style={{ marginRight: '8px' }}>
-            🔎
-          </span>
-        ),
-        Menu: ({ children, innerRef, innerProps }) => {
-          return (
-            <CustomMenu ref={innerRef} {...innerProps}>
-              <FixedToggle>
-                <input
-                  name="isGoing"
-                  type="checkbox"
-                  checked={capEth}
-                  onChange={() => {
-                    setCapEth(!capEth)
-                  }}
-                />
-                Hide Low Liquidity
-              </FixedToggle>
-              {children}
-            </CustomMenu>
-          )
-        },
-      }}
+      components={{ DropdownIndicator, Menu }}
     />
   ) : (
     <ReactSelect
