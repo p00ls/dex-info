@@ -4,7 +4,7 @@ on:
     inputs:
       channel_id:
         description: channel id
-        required: false
+        required: true
         type: string
       project_id:
         required: true
