@@ -1,8 +1,8 @@
-import React from 'react'
-import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { default as ReactSelect } from 'react-select'
+import { useState } from 'react'
 import { isMobile } from 'react-device-detect'
+import { default as ReactSelect } from 'react-select'
+import styled from 'styled-components'
 
 import Popout from './popout'
 
@@ -54,8 +54,9 @@ const FixedToggle = styled.div`
   }
 `
 
-let addressStart = new RegExp('^0x')
-function customFilter(option, searchText) {
+const addressStart = new RegExp('^0x')
+
+const customFilter = (option, searchText) => {
   const isAddress = addressStart.test(searchText)
   if (isAddress) {
     return option.data.tokenAddress.toString().toLowerCase().includes(searchText.toString().toLowerCase())
@@ -70,6 +71,7 @@ const DropdownIndicator = () => (
 )
 
 const Menu = ({ children, innerRef, innerProps }) => {
+  const [capEth, setCapEth] = useState(false)
   return (
     <CustomMenu ref={innerRef} {...innerProps}>
       <FixedToggle>
