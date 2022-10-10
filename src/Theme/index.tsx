@@ -1,16 +1,18 @@
 import React from 'react'
-import { ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle } from 'styled-components'
-import { useDarkModeManager } from '../contexts/LocalStorage'
-import styled from 'styled-components'
 import { Text } from 'rebass'
+import styled, {
+  createGlobalStyle,
+  DefaultTheme,
+  ThemeProvider as StyledComponentsThemeProvider,
+} from 'styled-components'
+import { useDarkModeManager } from '../contexts/LocalStorage'
 
-export default function ThemeProvider({ children }) {
+export default function ThemeProvider({ children }: { children?: React.ReactNode }) {
   const [darkMode] = useDarkModeManager()
-
   return <StyledComponentsThemeProvider theme={theme(darkMode)}>{children}</StyledComponentsThemeProvider>
 }
 
-const theme = (darkMode, color) => ({
+const theme = (darkMode: boolean, color?: string): DefaultTheme => ({
   customColor: color,
   textColor: darkMode ? color : 'black',
 
@@ -133,7 +135,7 @@ export const Link = styled.a.attrs({
   }
 `
 
-export const ThemedBackground = styled.div`
+export const ThemedBackground = styled.div<{ backgroundColor: string }>`
   position: absolute;
   top: 0;
   left: 0;

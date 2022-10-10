@@ -1,3 +1,19 @@
 {
-    "editor.formatOnSave": true
+  "search.exclude": {
+    "**/node_modules/": true
+  },
+  "eslint.packageManager": "yarn",
+  "eslint.alwaysShowStatus": true,
+  "javascript.validate.enable": false,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "prettier.configPath": ".prettierrc",
+  "eslint.format.enable": true,
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "prettier.prettierPath": "./node_modules/prettier/index.js",
+  "files.insertFinalNewline": true
 }
