@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import { useMedia } from 'react-use'
 import dayjs from 'dayjs'
-import LocalLoader from '../LocalLoader'
 import utc from 'dayjs/plugin/utc'
+import { useEffect, useState } from 'react'
+import { useMedia } from 'react-use'
 import { Box, Flex, Text } from 'rebass'
 import styled from 'styled-components'
+import LocalLoader from '../LocalLoader'
 
-import { CustomLink } from '../Link'
-import { Divider } from '../../components'
-import { withRouter } from 'react-router-dom'
+import { Divider } from '..'
+import { PAIR_BLACKLIST } from '../../constants'
+import { TYPE } from '../../Theme'
 import { formattedNum, formattedPercent } from '../../utils'
+import { AutoColumn } from '../Column'
 import DoubleTokenLogo from '../DoubleLogo'
 import FormattedName from '../FormattedName'
+import { CustomLink } from '../Link'
 import QuestionHelper from '../QuestionHelper'
-import { TYPE } from '../../Theme'
-import { PAIR_BLACKLIST } from '../../constants'
-import { AutoColumn } from '../Column'
 
 dayjs.extend(utc)
 
@@ -27,7 +26,7 @@ const PageButtons = styled.div`
   margin-bottom: 0.5em;
 `
 
-const Arrow = styled.div`
+const Arrow = styled.div<{ faded?: boolean }>`
   color: ${({ theme }) => theme.primary1};
   opacity: ${(props) => (props.faded ? 0.3 : 1)};
   padding: 0 20px;
@@ -41,7 +40,7 @@ const List = styled(Box)`
   -webkit-overflow-scrolling: touch;
 `
 
-const DashGrid = styled.div`
+const DashGrid = styled.div<{ fade?: boolean; center?: boolean; disbaleLinks?: boolean; focus?: boolean }>`
   display: grid;
   grid-gap: 1em;
   grid-template-columns: 100px 1fr 1fr;
@@ -127,8 +126,8 @@ const FIELD_TO_VALUE = (field, useTracked) => {
   }
 }
 
-const formatDataText = (value, trackedValue, supressWarning = false) => {
-  const showUntracked = value !== '$0' && !trackedValue & !supressWarning
+const formatDataText = (value: any, trackedValue: any, supressWarning = false) => {
+  const showUntracked = value !== '$0' && !trackedValue && !supressWarning
   return (
     <AutoColumn gap="2px" style={{ opacity: showUntracked ? '0.7' : '1' }}>
       <div style={{ textAlign: 'right' }}>{value}</div>
@@ -139,7 +138,19 @@ const formatDataText = (value, trackedValue, supressWarning = false) => {
   )
 }
 
-function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = false }) {
+const PairList = ({
+  pairs,
+  color,
+  disbaleLinks,
+  maxItems = 10,
+  useTracked = false,
+}: {
+  pairs: any[]
+  color: string
+  disbaleLinks?: boolean
+  maxItems?: number
+  useTracked?: boolean
+}) => {
   const below600 = useMedia('(max-width: 600px)')
   const below740 = useMedia('(max-width: 740px)')
   const below1080 = useMedia('(max-width: 1080px)')
@@ -168,7 +179,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
     }
   }, [ITEMS_PER_PAGE, pairs])
 
-  const ListItem = ({ pairAddress, index }) => {
+  const ListItem = ({ pairAddress, index }: { pairAddress: string; index: number }) => {
     const pairData = pairs[pairAddress]
 
     if (pairData && pairData.token0 && pairData.token1) {
@@ -228,7 +239,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
         </DashGrid>
       )
     } else {
-      return ''
+      return null
     }
   }
 
@@ -242,8 +253,8 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
         const pairA = pairs[addressA]
         const pairB = pairs[addressB]
         if (sortedColumn === SORT_FIELD.APY) {
-          const apy0 = parseFloat(pairA.oneDayVolumeUSD * 0.003 * 356 * 100) / parseFloat(pairA.reserveUSD)
-          const apy1 = parseFloat(pairB.oneDayVolumeUSD * 0.003 * 356 * 100) / parseFloat(pairB.reserveUSD)
+          const apy0 = parseFloat((pairA.oneDayVolumeUSD * 0.003 * 356 * 100).toString()) / parseFloat(pairA.reserveUSD)
+          const apy1 = parseFloat((pairB.oneDayVolumeUSD * 0.003 * 356 * 100).toString()) / parseFloat(pairB.reserveUSD)
           return apy0 > apy1 ? (sortDirection ? -1 : 1) * 1 : (sortDirection ? -1 : 1) * -1
         }
         return parseFloat(pairA[FIELD_TO_VALUE(sortedColumn, useTracked)]) >
@@ -360,4 +371,4 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
   )
 }
 
-export default withRouter(PairList)
+export default PairList

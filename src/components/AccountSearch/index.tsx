@@ -1,19 +1,18 @@
-import React, { useState } from 'react'
 import 'feather-icons'
-import { withRouter } from 'react-router-dom'
-import styled from 'styled-components'
-import { ButtonLight, ButtonFaded } from '../ButtonStyled'
-import { AutoRow, RowBetween } from '../Row'
-import { isAddress } from '../../utils'
-import { useSavedAccounts } from '../../contexts/LocalStorage'
-import { AutoColumn } from '../Column'
-import { TYPE } from '../../Theme'
-import { Hover, StyledIcon } from '..'
-import Panel from '../Panel'
-import { Divider } from '..'
+import { useState } from 'react'
 import { Flex } from 'rebass'
+import styled from 'styled-components'
+import { Divider, Hover, StyledIcon } from '..'
+import { useSavedAccounts } from '../../contexts/LocalStorage'
+import { TYPE } from '../../Theme'
+import { isAddress } from '../../utils'
+import { ButtonFaded, ButtonLight } from '../ButtonStyled'
+import { AutoColumn } from '../Column'
+import Panel from '../Panel'
+import { AutoRow, RowBetween } from '../Row'
 
 import { X } from 'react-feather'
+import { useHistory } from 'react-router-dom'
 
 const Wrapper = styled.div`
   display: flex;
@@ -61,7 +60,7 @@ const AccountLink = styled.span`
   font-weight: 500;
 `
 
-const DashGrid = styled.div`
+const DashGrid = styled.div<{ center?: boolean }>`
   display: grid;
   grid-gap: 1em;
   grid-template-columns: 1fr;
@@ -73,9 +72,10 @@ const DashGrid = styled.div`
   }
 `
 
-function AccountSearch({ history, small }) {
-  const [accountValue, setAccountValue] = useState()
+const AccountSearch = ({ small }: { small?: boolean }) => {
+  const [accountValue, setAccountValue] = useState<string>()
   const [savedAccounts, addAccount, removeAccount] = useSavedAccounts()
+  const history = useHistory()
 
   function handleAccountSearch() {
     if (isAddress(accountValue)) {
@@ -173,4 +173,4 @@ function AccountSearch({ history, small }) {
   )
 }
 
-export default withRouter(AccountSearch)
+export default AccountSearch

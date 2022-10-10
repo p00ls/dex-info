@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import styled from 'styled-components'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { useEffect, useMemo, useState } from 'react'
+import styled from 'styled-components'
 
 import { Box, Flex, Text } from 'rebass'
-import TokenLogo from '../TokenLogo'
+import { Divider } from '..'
 import { CustomLink } from '../Link'
 import Row from '../Row'
-import { Divider } from '..'
+import TokenLogo from '../TokenLogo'
 
-import { formattedNum, formattedPercent } from '../../utils'
 import { useMedia } from 'react-use'
-import { withRouter } from 'react-router-dom'
 import { TOKEN_BLACKLIST } from '../../constants'
-import FormattedName from '../FormattedName'
 import { TYPE } from '../../Theme'
+import { formattedNum, formattedPercent } from '../../utils'
+import FormattedName from '../FormattedName'
 
 dayjs.extend(utc)
 
@@ -318,4 +317,4 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
   )
 }
 
-export default withRouter(TopTokenList)
+export default TopTokenList

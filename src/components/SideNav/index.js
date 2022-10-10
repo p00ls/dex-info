@@ -1,16 +1,14 @@
-import React from 'react'
-import styled from 'styled-components'
-import { AutoColumn } from '../Column'
-import Title from '../Title'
-import { BasicLink } from '../Link'
-import { useMedia } from 'react-use'
 import { transparentize } from 'polished'
-import { TYPE } from '../../Theme'
-import { withRouter } from 'react-router-dom'
-import { TrendingUp, List, PieChart, Disc } from 'react-feather'
-import Link from '../Link'
+import { Disc, List, PieChart, TrendingUp } from 'react-feather'
+import { useHistory } from 'react-router-dom'
+import { useMedia } from 'react-use'
+import styled from 'styled-components'
 import { useSessionStart } from '../../contexts/Application'
 import { useDarkModeManager } from '../../contexts/LocalStorage'
+import { TYPE } from '../../Theme'
+import { AutoColumn } from '../Column'
+import Link, { BasicLink } from '../Link'
+import Title from '../Title'
 import Toggle from '../Toggle'
 
 const Wrapper = styled.div`
@@ -99,7 +97,8 @@ const PollingDot = styled.div`
   background-color: ${({ theme }) => theme.green1};
 `
 
-function SideNav({ history }) {
+function SideNav() {
+  const history = useHistory()
   const below1080 = useMedia('(max-width: 1080px)')
 
   const below1180 = useMedia('(max-width: 1180px)')
@@ -200,4 +199,4 @@ function SideNav({ history }) {
   )
 }
 
-export default withRouter(SideNav)
+export default SideNav

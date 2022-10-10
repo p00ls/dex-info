@@ -1,11 +1,11 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
-import { shade } from 'polished'
+import copy from 'copy-to-clipboard'
 import Vibrant from 'node-vibrant'
+import { shade } from 'polished'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { hex } from 'wcag-contrast'
 import { isAddress } from '../utils'
-import copy from 'copy-to-clipboard'
 
-export function useColor(tokenAddress, token) {
+export const useColor = (tokenAddress: string, token?: string) => {
   const [color, setColor] = useState('#2172E5')
   if (tokenAddress) {
     const path = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${isAddress(

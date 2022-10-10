@@ -1,43 +1,42 @@
-import React, { useEffect } from 'react'
-import { withRouter } from 'react-router-dom'
 import 'feather-icons'
-import styled from 'styled-components'
-import Panel from '../components/Panel'
-import {
-  PageWrapper,
-  ContentWrapperLarge,
-  StyledIcon,
-  BlockedWrapper,
-  BlockedMessageWrapper,
-} from '../components/index'
-import { AutoRow, RowBetween, RowFixed } from '../components/Row'
-import Column, { AutoColumn } from '../components/Column'
-import { ButtonLight, ButtonDark } from '../components/ButtonStyled'
-import PairChart from '../components/PairChart'
-import Link from '../components/Link'
-import TxnList from '../components/TxnList'
-import Loader from '../components/LocalLoader'
-import { BasicLink } from '../components/Link'
-import Search from '../components/Search'
-import { formattedNum, formattedPercent, getPoolLink, getSwapLink, shortenAddress } from '../utils'
-import { useColor } from '../hooks'
-import { usePairData, usePairTransactions } from '../contexts/PairData'
-import { TYPE, ThemedBackground } from '../Theme'
 import { transparentize } from 'polished'
-import CopyHelper from '../components/Copy'
+import { useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import { useMedia } from 'react-use'
-import DoubleTokenLogo from '../components/DoubleLogo'
-import TokenLogo from '../components/TokenLogo'
+import styled from 'styled-components'
 import { Hover } from '../components'
-import { useEthPrice } from '../contexts/GlobalData'
+import { ButtonDark, ButtonLight } from '../components/ButtonStyled'
+import Column, { AutoColumn } from '../components/Column'
+import CopyHelper from '../components/Copy'
+import DoubleTokenLogo from '../components/DoubleLogo'
+import {
+  BlockedMessageWrapper,
+  BlockedWrapper,
+  ContentWrapperLarge,
+  PageWrapper,
+  StyledIcon,
+} from '../components/index'
+import Link, { BasicLink } from '../components/Link'
+import Loader from '../components/LocalLoader'
+import PairChart from '../components/PairChart'
+import Panel from '../components/Panel'
+import { AutoRow, RowBetween, RowFixed } from '../components/Row'
+import Search from '../components/Search'
+import TokenLogo from '../components/TokenLogo'
+import TxnList from '../components/TxnList'
 import Warning from '../components/Warning'
+import { useEthPrice } from '../contexts/GlobalData'
 import { usePathDismissed, useSavedPairs } from '../contexts/LocalStorage'
+import { usePairData, usePairTransactions } from '../contexts/PairData'
+import { useColor } from '../hooks'
+import { ThemedBackground, TYPE } from '../Theme'
+import { formattedNum, formattedPercent, getPoolLink, getSwapLink, shortenAddress } from '../utils'
 
-import { Bookmark, PlusCircle, AlertCircle } from 'react-feather'
+import { AlertCircle, Bookmark, PlusCircle } from 'react-feather'
 import FormattedName from '../components/FormattedName'
-import { useListedTokens } from '../contexts/Application'
 import HoverText from '../components/HoverText'
-import { UNTRACKED_COPY, PAIR_BLACKLIST, BLOCKED_WARNINGS } from '../constants'
+import { BLOCKED_WARNINGS, PAIR_BLACKLIST, UNTRACKED_COPY } from '../constants'
+import { useListedTokens } from '../contexts/Application'
 
 const DashboardWrapper = styled.div`
   width: 100%;
@@ -116,12 +115,12 @@ const WarningIcon = styled(AlertCircle)`
   opacity: 0.6;
 `
 
-const WarningGrouping = styled.div`
+const WarningGrouping = styled.div<{ disabled?: boolean }>`
   opacity: ${({ disabled }) => disabled && '0.4'};
   pointer-events: ${({ disabled }) => disabled && 'none'};
 `
 
-function PairPage({ pairAddress, history }) {
+const PairPage = ({ pairAddress }: { pairAddress: string }) => {
   const {
     token0,
     token1,
@@ -135,6 +134,7 @@ function PairPage({ pairAddress, history }) {
     volumeChangeUntracked,
     liquidityChangeUSD,
   } = usePairData(pairAddress)
+  const history = useHistory()
 
   useEffect(() => {
     document.querySelector('body').scrollTo(0, 0)
@@ -152,7 +152,7 @@ function PairPage({ pairAddress, history }) {
   const usingUtVolume = oneDayVolumeUSD === 0 && !!oneDayVolumeUntracked
   const volumeChange = formattedPercent(!usingUtVolume ? volumeChangeUSD : volumeChangeUntracked)
 
-  const showUSDWaning = usingUntrackedLiquidity | usingUtVolume
+  const showUSDWaning = usingUntrackedLiquidity || usingUtVolume
 
   // get fees	  // get fees
   const fees =
@@ -514,4 +514,4 @@ function PairPage({ pairAddress, history }) {
   )
 }
 
-export default withRouter(PairPage)
+export default PairPage

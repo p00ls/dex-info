@@ -1,17 +1,16 @@
-import React, { useEffect } from 'react'
 import 'feather-icons'
-import { withRouter } from 'react-router-dom'
-import { TYPE } from '../Theme'
-import { PageWrapper, FullWrapper } from '../components'
-import Panel from '../components/Panel'
-import LPList from '../components/LPList'
-import styled from 'styled-components'
-import AccountSearch from '../components/AccountSearch'
-import { useTopLps } from '../contexts/GlobalData'
-import LocalLoader from '../components/LocalLoader'
-import { RowBetween } from '../components/Row'
+import { useEffect } from 'react'
 import { useMedia } from 'react-use'
+import styled from 'styled-components'
+import { FullWrapper, PageWrapper } from '../components'
+import AccountSearch from '../components/AccountSearch'
+import LocalLoader from '../components/LocalLoader'
+import LPList from '../components/LPList'
+import Panel from '../components/Panel'
+import { RowBetween } from '../components/Row'
 import Search from '../components/Search'
+import { useTopLps } from '../contexts/GlobalData'
+import { TYPE } from '../Theme'
 
 const AccountWrapper = styled.div`
   @media screen and (max-width: 600px) {
@@ -48,4 +47,4 @@ function AccountLookup() {
   )
 }
 
-export default withRouter(AccountLookup)
+export default AccountLookup

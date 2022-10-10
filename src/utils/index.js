@@ -1,15 +1,14 @@
-import React from 'react'
 import { BigNumber } from 'bignumber.js'
 import dayjs from 'dayjs'
-import { ethers } from 'ethers'
 import utc from 'dayjs/plugin/utc'
-import { client, blockClient } from '../apollo/client'
-import { GET_BLOCK, GET_BLOCKS, SHARE_VALUE } from '../apollo/queries'
-import { Text } from 'rebass'
 import _Decimal from 'decimal.js-light'
-import toFormat from 'toformat'
-import { timeframeOptions, WETH_ADDRESS } from '../constants'
+import { ethers } from 'ethers'
 import Numeral from 'numeral'
+import { Text } from 'rebass'
+import toFormat from 'toformat'
+import { blockClient, client } from '../apollo/client'
+import { GET_BLOCK, GET_BLOCKS, SHARE_VALUE } from '../apollo/queries'
+import { timeframeOptions, WETH_ADDRESS } from '../constants'
 
 // format libraries
 const Decimal = toFormat(_Decimal)
@@ -350,7 +349,7 @@ export const toSignificant = (number, significantDigits) => {
   return updated.toFormat(updated.decimalPlaces(), { groupSeparator: '' })
 }
 
-export const formattedNum = (number, usd = false, acceptNegatives = false) => {
+export const formattedNum = (number: number, usd = false, acceptNegatives = false) => {
   if (isNaN(number) || number === '' || number === undefined) {
     return usd ? '$0' : 0
   }

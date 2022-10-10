@@ -1,6 +1,5 @@
-import React from 'react'
+import { Box, Text } from 'rebass'
 import styled from 'styled-components'
-import { Text, Box } from 'rebass'
 
 import Link from './Link'
 
@@ -66,7 +65,7 @@ const Address = ({ address, token, ...rest }) => (
   </Link>
 )
 
-export const Hover = styled.div`
+export const Hover = styled.div<{ fade?: boolean }>`
   :hover {
     cursor: pointer;
     opacity: ${({ fade }) => fade && '0.7'};
@@ -77,7 +76,7 @@ export const StyledIcon = styled.div`
   color: ${({ theme }) => theme.text1};
 `
 
-const EmptyCard = styled.div`
+const EmptyCard = styled.div<{ height?: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -103,7 +102,7 @@ export const SubNav = styled.ul`
   padding: 0;
   margin-bottom: 2rem;
 `
-export const SubNavEl = styled.li`
+export const SubNavEl = styled.li<{ isActive?: boolean }>`
   list-style: none;
   display: flex;
   padding-bottom: 0.5rem;

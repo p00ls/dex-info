@@ -1,40 +1,37 @@
-import React, { useState } from 'react'
 import 'feather-icons'
-import { withRouter } from 'react-router-dom'
+import { transparentize } from 'polished'
+import { useEffect, useState } from 'react'
+import { AlertCircle, Bookmark, PlusCircle } from 'react-feather'
+import { useHistory } from 'react-router-dom'
+import { useMedia } from 'react-use'
 import { Text } from 'rebass'
 import styled from 'styled-components'
-import Link from '../components/Link'
-import Panel from '../components/Panel'
-import TokenLogo from '../components/TokenLogo'
-import PairList from '../components/PairList'
-import Loader from '../components/LocalLoader'
-import { AutoRow, RowBetween, RowFixed } from '../components/Row'
-import Column, { AutoColumn } from '../components/Column'
-import { ButtonLight, ButtonDark } from '../components/ButtonStyled'
-import TxnList from '../components/TxnList'
-import TokenChart from '../components/TokenChart'
-import { BasicLink } from '../components/Link'
-import Search from '../components/Search'
-import { formattedNum, formattedPercent, getPoolLink, getSwapLink, localNumber } from '../utils'
-import { useTokenData, useTokenTransactions, useTokenPairs } from '../contexts/TokenData'
-import { TYPE, ThemedBackground } from '../Theme'
-import { transparentize } from 'polished'
-import { useColor } from '../hooks'
-import CopyHelper from '../components/Copy'
-import { useMedia } from 'react-use'
-import { useDataForList } from '../contexts/PairData'
-import { useEffect } from 'react'
-import Warning from '../components/Warning'
-import { usePathDismissed, useSavedTokens } from '../contexts/LocalStorage'
-import { Hover, PageWrapper, ContentWrapper, StyledIcon, BlockedWrapper, BlockedMessageWrapper } from '../components'
-import { PlusCircle, Bookmark, AlertCircle } from 'react-feather'
-import FormattedName from '../components/FormattedName'
-import { useListedTokens } from '../contexts/Application'
-import HoverText from '../components/HoverText'
-import { UNTRACKED_COPY, TOKEN_BLACKLIST, BLOCKED_WARNINGS } from '../constants'
-import QuestionHelper from '../components/QuestionHelper'
+import { BlockedMessageWrapper, BlockedWrapper, ContentWrapper, Hover, PageWrapper, StyledIcon } from '../components'
+import { ButtonDark, ButtonLight } from '../components/ButtonStyled'
 import Checkbox from '../components/Checkbox'
-import { shortenAddress } from '../utils'
+import Column, { AutoColumn } from '../components/Column'
+import CopyHelper from '../components/Copy'
+import FormattedName from '../components/FormattedName'
+import HoverText from '../components/HoverText'
+import Link, { BasicLink } from '../components/Link'
+import Loader from '../components/LocalLoader'
+import PairList from '../components/PairList'
+import Panel from '../components/Panel'
+import QuestionHelper from '../components/QuestionHelper'
+import { AutoRow, RowBetween, RowFixed } from '../components/Row'
+import Search from '../components/Search'
+import TokenChart from '../components/TokenChart'
+import TokenLogo from '../components/TokenLogo'
+import TxnList from '../components/TxnList'
+import Warning from '../components/Warning'
+import { BLOCKED_WARNINGS, TOKEN_BLACKLIST, UNTRACKED_COPY } from '../constants'
+import { useListedTokens } from '../contexts/Application'
+import { usePathDismissed, useSavedTokens } from '../contexts/LocalStorage'
+import { useDataForList } from '../contexts/PairData'
+import { useTokenData, useTokenPairs, useTokenTransactions } from '../contexts/TokenData'
+import { useColor } from '../hooks'
+import { ThemedBackground, TYPE } from '../Theme'
+import { formattedNum, formattedPercent, getPoolLink, getSwapLink, localNumber, shortenAddress } from '../utils'
 
 const DashboardWrapper = styled.div`
   width: 100%;
@@ -95,12 +92,12 @@ const WarningIcon = styled(AlertCircle)`
   opacity: 0.6;
 `
 
-const WarningGrouping = styled.div`
+const WarningGrouping = styled.div<{ disabled?: boolean }>`
   opacity: ${({ disabled }) => disabled && '0.4'};
   pointer-events: ${({ disabled }) => disabled && 'none'};
 `
 
-function TokenPage({ address, history }) {
+const TokenPage = ({ address }: { address: string }) => {
   const {
     id,
     name,
@@ -116,6 +113,7 @@ function TokenPage({ address, history }) {
     oneDayTxns,
     txnChange,
   } = useTokenData(address)
+  const history = useHistory()
 
   useEffect(() => {
     document.querySelector('body').scrollTo(0, 0)
@@ -375,7 +373,7 @@ function TokenPage({ address, history }) {
               }}
             >
               {address && fetchedPairsList ? (
-                <PairList color={backgroundColor} address={address} pairs={fetchedPairsList} useTracked={useTracked} />
+                <PairList color={backgroundColor} pairs={fetchedPairsList} useTracked={useTracked} />
               ) : (
                 <Loader />
               )}
@@ -434,4 +432,4 @@ function TokenPage({ address, history }) {
   )
 }
 
-export default withRouter(TokenPage)
+export default TokenPage

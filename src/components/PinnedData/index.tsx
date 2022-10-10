@@ -1,18 +1,17 @@
-import React from 'react'
-import { withRouter } from 'react-router-dom'
-import styled from 'styled-components'
-import { RowBetween, RowFixed } from '../Row'
-import { AutoColumn } from '../Column'
-import { TYPE } from '../../Theme'
-import { useSavedTokens, useSavedPairs } from '../../contexts/LocalStorage'
-import { Hover } from '..'
-import TokenLogo from '../TokenLogo'
-import AccountSearch from '../AccountSearch'
 import { Bookmark, ChevronRight, X } from 'react-feather'
+import { useHistory } from 'react-router-dom'
+import styled from 'styled-components'
+import { Hover } from '..'
+import { useSavedPairs, useSavedTokens } from '../../contexts/LocalStorage'
+import { TYPE } from '../../Theme'
+import AccountSearch from '../AccountSearch'
 import { ButtonFaded } from '../ButtonStyled'
+import { AutoColumn } from '../Column'
 import FormattedName from '../FormattedName'
+import { RowBetween, RowFixed } from '../Row'
+import TokenLogo from '../TokenLogo'
 
-const RightColumn = styled.div`
+const RightColumn = styled.div<{ open?: boolean; gap?: string }>`
   position: fixed;
   right: 0;
   top: 0px;
@@ -47,9 +46,10 @@ const StyledIcon = styled.div`
   color: ${({ theme }) => theme.text2};
 `
 
-function PinnedData({ history, open, setSavedOpen }) {
+const PinnedData = ({ open, setSavedOpen }: { open: boolean; setSavedOpen: (open: boolean) => void }) => {
   const [savedPairs, , removePair] = useSavedPairs()
   const [savedTokens, , removeToken] = useSavedTokens()
+  const history = useHistory()
 
   return !open ? (
     <RightColumn open={open} onClick={() => setSavedOpen(true)}>
@@ -148,4 +148,4 @@ function PinnedData({ history, open, setSavedOpen }) {
   )
 }
 
-export default withRouter(PinnedData)
+export default PinnedData

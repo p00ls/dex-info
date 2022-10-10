@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { useMedia } from 'react-use'
 import dayjs from 'dayjs'
-import LocalLoader from '../LocalLoader'
 import utc from 'dayjs/plugin/utc'
+import { useEffect, useState } from 'react'
+import { useMedia } from 'react-use'
 import { Box, Flex, Text } from 'rebass'
 import styled from 'styled-components'
-import Link, { CustomLink } from '../Link'
 import { Divider } from '..'
-import DoubleTokenLogo from '../DoubleLogo'
-import { withRouter } from 'react-router-dom'
-import { formattedNum, getUniswapAppLink } from '../../utils'
-import { AutoColumn } from '../Column'
-import { RowFixed } from '../Row'
-import { ButtonLight } from '../ButtonStyled'
 import { TYPE } from '../../Theme'
+import { formattedNum, getUniswapAppLink } from '../../utils'
+import { ButtonLight } from '../ButtonStyled'
+import { AutoColumn } from '../Column'
+import DoubleTokenLogo from '../DoubleLogo'
 import FormattedName from '../FormattedName'
+import Link, { CustomLink } from '../Link'
+import LocalLoader from '../LocalLoader'
+import { RowFixed } from '../Row'
 
 dayjs.extend(utc)
 
@@ -260,4 +259,4 @@ function MiningPositionList({ miningPositions }) {
   )
 }
 
-export default withRouter(MiningPositionList)
+export default MiningPositionList

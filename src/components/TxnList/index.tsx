@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import styled from 'styled-components'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
-import { formatTime, formattedNum, urls } from '../../utils'
 import { useMedia } from 'react-use'
 import { useCurrentCurrency } from '../../contexts/Application'
-import { RowFixed, RowBetween } from '../Row'
+import { formattedNum, formatTime, urls } from '../../utils'
+import { RowBetween, RowFixed } from '../Row'
 
-import LocalLoader from '../LocalLoader'
 import { Box, Flex, Text } from 'rebass'
-import Link from '../Link'
 import { Divider, EmptyCard } from '..'
-import DropdownSelect from '../DropdownSelect'
-import FormattedName from '../FormattedName'
 import { TYPE } from '../../Theme'
 import { updateNameData } from '../../utils/data'
+import DropdownSelect from '../DropdownSelect'
+import FormattedName from '../FormattedName'
+import Link from '../Link'
+import LocalLoader from '../LocalLoader'
 
 dayjs.extend(utc)
 
@@ -27,7 +27,7 @@ const PageButtons = styled.div`
   margin-bottom: 0.5em;
 `
 
-const Arrow = styled.div`
+const Arrow = styled.div<{ faded?: boolean }>`
   color: #2f80ed;
   opacity: ${(props) => (props.faded ? 0.3 : 1)};
   padding: 0 20px;
@@ -41,7 +41,7 @@ const List = styled(Box)`
   -webkit-overflow-scrolling: touch;
 `
 
-const DashGrid = styled.div`
+const DashGrid = styled.div<{ center?: boolean }>`
   display: grid;
   grid-gap: 1em;
   grid-template-columns: 100px 1fr 1fr;
@@ -114,7 +114,7 @@ const DataText = styled(Flex)`
   }
 `
 
-const SortText = styled.button`
+const SortText = styled.button<{ active?: boolean }>`
   cursor: pointer;
   font-weight: ${({ active, theme }) => (active ? 500 : 400)};
   margin-right: 0.75rem !important;
@@ -162,7 +162,17 @@ function getTransactionType(event, symbol0, symbol1) {
 }
 
 // @TODO rework into virtualized list
-function TxnList({ transactions, symbol0Override, symbol1Override, color }) {
+const TxnList = ({
+  transactions,
+  symbol0Override,
+  symbol1Override,
+  color,
+}: {
+  transactions: any
+  symbol0Override?: any
+  symbol1Override?: any
+  color?: any
+}) => {
   // page state
   const [page, setPage] = useState(1)
   const [maxPage, setMaxPage] = useState(1)
@@ -170,7 +180,7 @@ function TxnList({ transactions, symbol0Override, symbol1Override, color }) {
   // sorting
   const [sortDirection, setSortDirection] = useState(true)
   const [sortedColumn, setSortedColumn] = useState(SORT_FIELD.TIMESTAMP)
-  const [filteredItems, setFilteredItems] = useState()
+  const [filteredItems, setFilteredItems] = useState<any[]>()
   const [txFilter, setTxFilter] = useState(TXN_TYPE.ALL)
 
   const [currency] = useCurrentCurrency()
@@ -183,10 +193,10 @@ function TxnList({ transactions, symbol0Override, symbol1Override, color }) {
   // parse the txns and format for UI
   useEffect(() => {
     if (transactions && transactions.mints && transactions.burns && transactions.swaps) {
-      let newTxns = []
+      const newTxns = []
       if (transactions.mints.length > 0) {
         transactions.mints.map((mint) => {
-          let newTxn = {}
+          const newTxn = {} as any
           newTxn.hash = mint.transaction.id
           newTxn.timestamp = mint.transaction.timestamp
           newTxn.type = TXN_TYPE.ADD
@@ -201,7 +211,7 @@ function TxnList({ transactions, symbol0Override, symbol1Override, color }) {
       }
       if (transactions.burns.length > 0) {
         transactions.burns.map((burn) => {
-          let newTxn = {}
+          const newTxn = {} as any
           newTxn.hash = burn.transaction.id
           newTxn.timestamp = burn.transaction.timestamp
           newTxn.type = TXN_TYPE.REMOVE
@@ -219,7 +229,7 @@ function TxnList({ transactions, symbol0Override, symbol1Override, color }) {
           const netToken0 = swap.amount0In - swap.amount0Out
           const netToken1 = swap.amount1In - swap.amount1Out
 
-          let newTxn = {}
+          const newTxn = {} as any
 
           if (netToken0 < 0) {
             newTxn.token0Symbol = updateNameData(swap.pair).token0.symbol
@@ -279,7 +289,7 @@ function TxnList({ transactions, symbol0Override, symbol1Override, color }) {
   const below1080 = useMedia('(max-width: 1080px)')
   const below780 = useMedia('(max-width: 780px)')
 
-  const ListItem = ({ item }) => {
+  const ListItem = ({ item }: { item: any }) => {
     return (
       <DashGrid style={{ height: '48px' }}>
         <DataText area="txn" fontWeight="500">
@@ -430,7 +440,7 @@ function TxnList({ transactions, symbol0Override, symbol1Override, color }) {
           filteredList.map((item, index) => {
             return (
               <div key={index}>
-                <ListItem key={index} index={index + 1} item={item} />
+                <ListItem key={index} item={item} />
                 <Divider />
               </div>
             )

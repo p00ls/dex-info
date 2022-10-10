@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useState } from 'react'
 import { ApolloProvider } from 'react-apollo'
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route, Switch, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { client } from './apollo/client'
 import PinnedData from './components/PinnedData'
@@ -99,6 +99,54 @@ const LayoutWrapper: FC<PropsWithChildren<{ savedOpen?: boolean; setSavedOpen: (
 
 const BLOCK_DIFFERENCE_THRESHOLD = 30
 
+const TokenComponent = ({ savedOpen, setSavedOpen }: { savedOpen: boolean; setSavedOpen: (open: boolean) => void }) => {
+  const { tokenAddress } = useParams<{ tokenAddress: string }>()
+
+  if (isAddress(tokenAddress.toLowerCase()) && !Object.keys(TOKEN_BLACKLIST).includes(tokenAddress.toLowerCase())) {
+    return (
+      <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+        <TokenPage address={tokenAddress.toLowerCase()} />
+      </LayoutWrapper>
+    )
+  } else {
+    return <Redirect to="/home" />
+  }
+}
+
+const PairComponent = ({ savedOpen, setSavedOpen }: { savedOpen: boolean; setSavedOpen: (open: boolean) => void }) => {
+  const { pairAddress } = useParams<{ pairAddress: string }>()
+
+  if (isAddress(pairAddress.toLowerCase()) && !Object.keys(PAIR_BLACKLIST).includes(pairAddress.toLowerCase())) {
+    return (
+      <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+        <PairPage pairAddress={pairAddress.toLowerCase()} />
+      </LayoutWrapper>
+    )
+  } else {
+    return <Redirect to="/home" />
+  }
+}
+
+const AccountComponent = ({
+  savedOpen,
+  setSavedOpen,
+}: {
+  savedOpen: boolean
+  setSavedOpen: (open: boolean) => void
+}) => {
+  const { accountAddress } = useParams<{ accountAddress: string }>()
+
+  if (isAddress(accountAddress.toLowerCase())) {
+    return (
+      <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+        <AccountPage account={accountAddress.toLowerCase()} />
+      </LayoutWrapper>
+    )
+  } else {
+    return <Redirect to="/home" />
+  }
+}
+
 function App() {
   const [savedOpen, setSavedOpen] = useState(false)
 
@@ -124,62 +172,17 @@ function App() {
         globalChartData &&
         Object.keys(globalChartData).length > 0 ? (
           <BrowserRouter>
-            <Route component={GoogleAnalyticsReporter} />
+            <GoogleAnalyticsReporter />
             <Switch>
-              <Route
-                exacts
-                strict
-                path="/token/:tokenAddress"
-                render={({ match }) => {
-                  if (
-                    isAddress(match.params.tokenAddress.toLowerCase()) &&
-                    !Object.keys(TOKEN_BLACKLIST).includes(match.params.tokenAddress.toLowerCase())
-                  ) {
-                    return (
-                      <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
-                        <TokenPage address={match.params.tokenAddress.toLowerCase()} />
-                      </LayoutWrapper>
-                    )
-                  } else {
-                    return <Redirect to="/home" />
-                  }
-                }}
-              />
-              <Route
-                exacts
-                strict
-                path="/pair/:pairAddress"
-                render={({ match }) => {
-                  if (
-                    isAddress(match.params.pairAddress.toLowerCase()) &&
-                    !Object.keys(PAIR_BLACKLIST).includes(match.params.pairAddress.toLowerCase())
-                  ) {
-                    return (
-                      <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
-                        <PairPage pairAddress={match.params.pairAddress.toLowerCase()} />
-                      </LayoutWrapper>
-                    )
-                  } else {
-                    return <Redirect to="/home" />
-                  }
-                }}
-              />
-              <Route
-                exacts
-                strict
-                path="/account/:accountAddress"
-                render={({ match }) => {
-                  if (isAddress(match.params.accountAddress.toLowerCase())) {
-                    return (
-                      <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
-                        <AccountPage account={match.params.accountAddress.toLowerCase()} />
-                      </LayoutWrapper>
-                    )
-                  } else {
-                    return <Redirect to="/home" />
-                  }
-                }}
-              />
+              <Route exact strict path="/token/:tokenAddress">
+                <TokenComponent savedOpen={savedOpen} setSavedOpen={setSavedOpen} />
+              </Route>
+              <Route exact strict path="/pair/:pairAddress">
+                <PairComponent savedOpen={savedOpen} setSavedOpen={setSavedOpen} />
+              </Route>
+              <Route exact strict path="/account/:accountAddress">
+                <AccountComponent savedOpen={savedOpen} setSavedOpen={setSavedOpen} />
+              </Route>
 
               <Route path="/home">
                 <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
@@ -204,8 +207,7 @@ function App() {
                   <AccountLookup />
                 </LayoutWrapper>
               </Route>
-
-              <Redirect to="/home" />
+              <Route path="*" render={() => <Redirect to="/home" />} />
             </Switch>
           </BrowserRouter>
         ) : (
