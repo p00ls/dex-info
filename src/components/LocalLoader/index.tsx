@@ -9,7 +9,7 @@ const pulse = keyframes`
   100% { transform: scale(1); }
 `
 
-const Wrapper = styled.div<{ fill?: boolean }>`
+const Wrapper = styled.div.attrs(({ fill }: { fill?: boolean }) => ({ fill: fill?.toString() }))`
   pointer-events: none;
   display: flex;
   align-items: center;

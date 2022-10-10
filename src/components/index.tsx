@@ -54,7 +54,7 @@ const Hint: FC<PropsWithChildren<any>> = ({ children, ...rest }) => (
   </Text>
 )
 
-const Address = ({ address, token, ...rest }: { address: string; token: string } & any) => (
+const Address = ({ address, token, ...rest }: { address: string; token: string } & unknown) => (
   <Link
     color="button"
     href={token ? urls.showToken(address) : urls.showAddress(address)}

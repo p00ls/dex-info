@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { isAddress } from '../../utils/index.js'
 import EthereumLogo from '../../assets/eth.png'
 import { WETH_ADDRESS } from '../../constants/index.js'
+import { isAddress } from '../../utils/index.js'
 
 const BAD_IMAGES = {}
 
@@ -12,7 +12,7 @@ const Inline = styled.div`
   align-self: center;
 `
 
-const Image = styled.img`
+const Image = styled.img<{ size: string }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   background-color: white;
@@ -20,7 +20,7 @@ const Image = styled.img`
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
 `
 
-const StyledEthereumLogo = styled.div`
+const StyledEthereumLogo = styled.div<{ size: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,7 +31,16 @@ const StyledEthereumLogo = styled.div`
   }
 `
 
-export default function TokenLogo({ address, header = false, size = '24px', ...rest }) {
+export default function TokenLogo({
+  address,
+  header = false,
+  size = '24px',
+  ...rest
+}: {
+  address: string
+  header?: boolean
+  size?: string
+} & React.HTMLAttributes<HTMLSpanElement>) {
   const [error, setError] = useState(false)
 
   useEffect(() => {
@@ -41,7 +50,7 @@ export default function TokenLogo({ address, header = false, size = '24px', ...r
   if (error || BAD_IMAGES[address]) {
     return (
       <Inline>
-        <span {...rest} alt={''} style={{ fontSize: size }} role="img" aria-label="face">
+        <span {...rest} style={{ fontSize: size }} role="img" aria-label="face">
           🤔
         </span>
       </Inline>

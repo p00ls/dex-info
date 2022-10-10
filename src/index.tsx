@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react'
 import { isMobile } from 'react-device-detect'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import ReactGA from 'react-ga'
 import App from './App'
 import ApplicationContextProvider from './contexts/Application'
@@ -57,7 +57,9 @@ function Updaters() {
   )
 }
 
-ReactDOM.render(
+const container = document.getElementById('root')
+const root = createRoot(container)
+root.render(
   <ContextProviders>
     <Updaters />
     <ThemeProvider>
@@ -66,6 +68,5 @@ ReactDOM.render(
         <App />
       </>
     </ThemeProvider>
-  </ContextProviders>,
-  document.getElementById('root')
+  </ContextProviders>
 )
