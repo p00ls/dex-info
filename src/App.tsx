@@ -1,30 +1,30 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
+import { FC, PropsWithChildren, useState } from 'react'
 import { ApolloProvider } from 'react-apollo'
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
+import styled from 'styled-components'
 import { client } from './apollo/client'
-import { Route, Switch, BrowserRouter, Redirect } from 'react-router-dom'
-import GlobalPage from './pages/GlobalPage'
-import TokenPage from './pages/TokenPage'
-import PairPage from './pages/PairPage'
-import { useGlobalData, useGlobalChartData } from './contexts/GlobalData'
-import { isAddress } from './utils'
-import AccountPage from './pages/AccountPage'
-import AllTokensPage from './pages/AllTokensPage'
-import AllPairsPage from './pages/AllPairsPage'
 import PinnedData from './components/PinnedData'
+import { useGlobalChartData, useGlobalData } from './contexts/GlobalData'
+import AccountPage from './pages/AccountPage'
+import AllPairsPage from './pages/AllPairsPage'
+import AllTokensPage from './pages/AllTokensPage'
+import GlobalPage from './pages/GlobalPage'
+import PairPage from './pages/PairPage'
+import TokenPage from './pages/TokenPage'
+import { isAddress } from './utils'
 
-import SideNav from './components/SideNav'
-import AccountLookup from './pages/AccountLookup'
-import LocalLoader from './components/LocalLoader'
-import { useLatestBlocks } from './contexts/Application'
 import GoogleAnalyticsReporter from './components/analytics/GoogleAnalyticsReporter'
+import LocalLoader from './components/LocalLoader'
+import SideNav from './components/SideNav'
 import { PAIR_BLACKLIST, TOKEN_BLACKLIST } from './constants'
+import { useLatestBlocks } from './contexts/Application'
+import AccountLookup from './pages/AccountLookup'
 
 const AppWrapper = styled.div`
   position: relative;
   width: 100%;
 `
-const ContentWrapper = styled.div`
+const ContentWrapper = styled.div<{ open?: boolean }>`
   display: grid;
   grid-template-columns: ${({ open }) => (open ? '220px 1fr 200px' : '220px 1fr 64px')};
 
@@ -40,7 +40,7 @@ const ContentWrapper = styled.div`
   }
 `
 
-const Right = styled.div`
+const Right = styled.div<{ open?: boolean }>`
   position: fixed;
   right: 0;
   bottom: 0rem;
@@ -79,7 +79,11 @@ const WarningBanner = styled.div`
 /**
  * Wrap the component with the header and sidebar pinned tab
  */
-const LayoutWrapper = ({ children, savedOpen, setSavedOpen }) => {
+const LayoutWrapper: FC<PropsWithChildren<{ savedOpen?: boolean; setSavedOpen: (open: boolean) => void }>> = ({
+  children,
+  savedOpen,
+  setSavedOpen,
+}) => {
   return (
     <>
       <ContentWrapper open={savedOpen}>
@@ -205,7 +209,7 @@ function App() {
             </Switch>
           </BrowserRouter>
         ) : (
-          <LocalLoader fill="true" />
+          <LocalLoader fill />
         )}
       </AppWrapper>
     </ApolloProvider>

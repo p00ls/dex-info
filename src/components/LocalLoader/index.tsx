@@ -1,5 +1,6 @@
-import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
+import { ReactComponent as Logo } from '../../assets/logo.svg'
+import { ReactComponent as LogoWhite } from '../../assets/logo_white.svg'
 import { useDarkModeManager } from '../../contexts/LocalStorage'
 
 const pulse = keyframes`
@@ -8,7 +9,7 @@ const pulse = keyframes`
   100% { transform: scale(1); }
 `
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ fill?: boolean }>`
   pointer-events: none;
   display: flex;
   align-items: center;
@@ -17,7 +18,7 @@ const Wrapper = styled.div`
   width: 100%;
 
   ${(props) =>
-    props.fill && !props.height
+    props.fill
       ? css`
           height: 100vh;
         `
@@ -33,14 +34,12 @@ const AnimatedImg = styled.div`
   }
 `
 
-const LocalLoader = ({ fill }) => {
+const LocalLoader = ({ fill }: { fill?: boolean }) => {
   const [darkMode] = useDarkModeManager()
 
   return (
     <Wrapper fill={fill}>
-      <AnimatedImg>
-        <img src={require(darkMode ? '../../assets/logo_white.svg' : '../../assets/logo.svg')} alt="loading-icon" />
-      </AnimatedImg>
+      <AnimatedImg>{darkMode ? <LogoWhite /> : <Logo />}</AnimatedImg>
     </Wrapper>
   )
 }
