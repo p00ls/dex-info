@@ -12,7 +12,7 @@ import Panel from '../Panel'
 import { AutoRow, RowBetween } from '../Row'
 
 import { X } from 'react-feather'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const Wrapper = styled.div`
   display: flex;
@@ -75,11 +75,11 @@ const DashGrid = styled.div<{ center?: boolean }>`
 const AccountSearch = ({ small }: { small?: boolean }) => {
   const [accountValue, setAccountValue] = useState<string>()
   const [savedAccounts, addAccount, removeAccount] = useSavedAccounts()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   function handleAccountSearch() {
     if (isAddress(accountValue)) {
-      history.push('/account/' + accountValue)
+      navigate('/account/' + accountValue)
       if (!savedAccounts.includes(accountValue)) {
         addAccount(accountValue)
       }
@@ -115,11 +115,7 @@ const AccountSearch = ({ small }: { small?: boolean }) => {
               savedAccounts.map((account) => {
                 return (
                   <DashGrid key={account} center={true} style={{ height: 'fit-content', padding: '1rem 0 0 0' }}>
-                    <Flex
-                      area="account"
-                      justifyContent="space-between"
-                      onClick={() => history.push('/account/' + account)}
-                    >
+                    <Flex area="account" justifyContent="space-between" onClick={() => navigate('/account/' + account)}>
                       <AccountLink>{account?.slice(0, 42)}</AccountLink>
                       <Hover
                         onClick={(e) => {
@@ -148,7 +144,7 @@ const AccountSearch = ({ small }: { small?: boolean }) => {
               savedAccounts.map((account) => {
                 return (
                   <RowBetween key={account}>
-                    <ButtonFaded onClick={() => history.push('/account/' + account)}>
+                    <ButtonFaded onClick={() => navigate('/account/' + account)}>
                       {small ? (
                         <TYPE.header>{account?.slice(0, 6) + '...' + account?.slice(38, 42)}</TYPE.header>
                       ) : (

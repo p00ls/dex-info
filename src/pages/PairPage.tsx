@@ -1,7 +1,7 @@
 import 'feather-icons'
 import { transparentize } from 'polished'
 import { useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useMedia } from 'react-use'
 import styled from 'styled-components'
 import { Hover } from '../components'
@@ -134,7 +134,8 @@ const PairPage = ({ pairAddress }: { pairAddress: string }) => {
     volumeChangeUntracked,
     liquidityChangeUSD,
   } = usePairData(pairAddress)
-  const history = useHistory()
+  const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     document.querySelector('body').scrollTo(0, 0)
@@ -182,7 +183,7 @@ const PairPage = ({ pairAddress }: { pairAddress: string }) => {
   const below900 = useMedia('(max-width: 900px)')
   const below600 = useMedia('(max-width: 600px)')
 
-  const [dismissed, markAsDismissed] = usePathDismissed(history.location.pathname)
+  const [dismissed, markAsDismissed] = usePathDismissed(location.pathname)
 
   useEffect(() => {
     window.scrollTo({
@@ -252,12 +253,9 @@ const PairPage = ({ pairAddress }: { pairAddress: string }) => {
                     <TYPE.main fontSize={below1080 ? '1.5rem' : '2rem'} style={{ margin: '0 1rem' }}>
                       {token0 && token1 ? (
                         <>
-                          <HoverSpan onClick={() => history.push(`/token/${token0?.id}`)}>{token0.symbol}</HoverSpan>
+                          <HoverSpan onClick={() => navigate(`/token/${token0?.id}`)}>{token0.symbol}</HoverSpan>
                           <span>-</span>
-                          <HoverSpan onClick={() => history.push(`/token/${token1?.id}`)}>
-                            {token1.symbol}
-                          </HoverSpan>{' '}
-                          Pair
+                          <HoverSpan onClick={() => navigate(`/token/${token1?.id}`)}>{token1.symbol}</HoverSpan> Pair
                         </>
                       ) : (
                         ''
@@ -306,7 +304,7 @@ const PairPage = ({ pairAddress }: { pairAddress: string }) => {
                 flexWrap: 'wrap',
               }}
             >
-              <FixedPanel onClick={() => history.push(`/token/${token0?.id}`)}>
+              <FixedPanel onClick={() => navigate(`/token/${token0?.id}`)}>
                 <RowFixed>
                   <TokenLogo address={token0?.id} size={'16px'} />
                   <TYPE.main fontSize={'16px'} lineHeight={1} fontWeight={500} ml={'4px'}>
@@ -318,7 +316,7 @@ const PairPage = ({ pairAddress }: { pairAddress: string }) => {
                   </TYPE.main>
                 </RowFixed>
               </FixedPanel>
-              <FixedPanel onClick={() => history.push(`/token/${token1?.id}`)}>
+              <FixedPanel onClick={() => navigate(`/token/${token1?.id}`)}>
                 <RowFixed>
                   <TokenLogo address={token1?.id} size={'16px'} />
                   <TYPE.main fontSize={'16px'} lineHeight={1} fontWeight={500} ml={'4px'}>
@@ -393,7 +391,7 @@ const PairPage = ({ pairAddress }: { pairAddress: string }) => {
                       <TYPE.main>Pooled Tokens</TYPE.main>
                       <div />
                     </RowBetween>
-                    <Hover onClick={() => history.push(`/token/${token0?.id}`)} fade={true}>
+                    <Hover onClick={() => navigate(`/token/${token0?.id}`)} fade={true}>
                       <AutoRow gap="4px">
                         <TokenLogo address={token0?.id} />
                         <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
@@ -404,7 +402,7 @@ const PairPage = ({ pairAddress }: { pairAddress: string }) => {
                         </TYPE.main>
                       </AutoRow>
                     </Hover>
-                    <Hover onClick={() => history.push(`/token/${token1?.id}`)} fade={true}>
+                    <Hover onClick={() => navigate(`/token/${token1?.id}`)} fade={true}>
                       <AutoRow gap="4px">
                         <TokenLogo address={token1?.id} />
                         <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>

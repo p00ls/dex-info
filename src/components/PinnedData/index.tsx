@@ -1,5 +1,5 @@
 import { Bookmark, ChevronRight, X } from 'react-feather'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Hover } from '..'
 import { useSavedPairs, useSavedTokens } from '../../contexts/LocalStorage'
@@ -49,7 +49,7 @@ const StyledIcon = styled.div`
 const PinnedData = ({ open, setSavedOpen }: { open: boolean; setSavedOpen: (open: boolean) => void }) => {
   const [savedPairs, , removePair] = useSavedPairs()
   const [savedTokens, , removeToken] = useSavedTokens()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   return !open ? (
     <RightColumn open={open} onClick={() => setSavedOpen(true)}>
@@ -87,7 +87,7 @@ const PinnedData = ({ open, setSavedOpen }: { open: boolean; setSavedOpen: (open
                 const pair = savedPairs[address]
                 return (
                   <RowBetween key={pair.address}>
-                    <ButtonFaded onClick={() => history.push('/pair/' + address)}>
+                    <ButtonFaded onClick={() => navigate('/pair/' + address)}>
                       <RowFixed>
                         <TYPE.header>
                           <FormattedName
@@ -123,7 +123,7 @@ const PinnedData = ({ open, setSavedOpen }: { open: boolean; setSavedOpen: (open
                 const token = savedTokens[address]
                 return (
                   <RowBetween key={address}>
-                    <ButtonFaded onClick={() => history.push('/token/' + address)}>
+                    <ButtonFaded onClick={() => navigate('/token/' + address)}>
                       <RowFixed>
                         <TokenLogo address={address} size={'14px'} />
                         <TYPE.header ml={'6px'}>

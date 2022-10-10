@@ -2,7 +2,7 @@ import 'feather-icons'
 import { transparentize } from 'polished'
 import { useEffect, useState } from 'react'
 import { AlertCircle, Bookmark, PlusCircle } from 'react-feather'
-import { useHistory } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useMedia } from 'react-use'
 import { Text } from 'rebass'
 import styled from 'styled-components'
@@ -113,7 +113,7 @@ const TokenPage = ({ address }: { address: string }) => {
     oneDayTxns,
     txnChange,
   } = useTokenData(address)
-  const history = useHistory()
+  const location = useLocation()
 
   useEffect(() => {
     document.querySelector('body').scrollTo(0, 0)
@@ -156,7 +156,7 @@ const TokenPage = ({ address }: { address: string }) => {
   const LENGTH = below1080 ? 10 : 16
   const formattedSymbol = symbol?.length > LENGTH ? symbol.slice(0, LENGTH) + '...' : symbol
 
-  const [dismissed, markAsDismissed] = usePathDismissed(history.location.pathname)
+  const [dismissed, markAsDismissed] = usePathDismissed(location.pathname)
   const [savedTokens, addToken] = useSavedTokens()
   const listedTokens = useListedTokens()
 

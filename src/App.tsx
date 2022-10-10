@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useState } from 'react'
 import { ApolloProvider } from 'react-apollo'
-import { BrowserRouter, Redirect, Route, Switch, useParams } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { client } from './apollo/client'
 import PinnedData from './components/PinnedData'
@@ -109,7 +109,7 @@ const TokenComponent = ({ savedOpen, setSavedOpen }: { savedOpen: boolean; setSa
       </LayoutWrapper>
     )
   } else {
-    return <Redirect to="/home" />
+    return <Navigate to="/home" replace />
   }
 }
 
@@ -123,7 +123,7 @@ const PairComponent = ({ savedOpen, setSavedOpen }: { savedOpen: boolean; setSav
       </LayoutWrapper>
     )
   } else {
-    return <Redirect to="/home" />
+    return <Navigate to="/home" replace />
   }
 }
 
@@ -143,7 +143,7 @@ const AccountComponent = ({
       </LayoutWrapper>
     )
   } else {
-    return <Redirect to="/home" />
+    return <Navigate to="/home" replace />
   }
 }
 
@@ -173,42 +173,54 @@ function App() {
         Object.keys(globalChartData).length > 0 ? (
           <BrowserRouter>
             <GoogleAnalyticsReporter />
-            <Switch>
-              <Route exact strict path="/token/:tokenAddress">
-                <TokenComponent savedOpen={savedOpen} setSavedOpen={setSavedOpen} />
-              </Route>
-              <Route exact strict path="/pair/:pairAddress">
-                <PairComponent savedOpen={savedOpen} setSavedOpen={setSavedOpen} />
-              </Route>
-              <Route exact strict path="/account/:accountAddress">
-                <AccountComponent savedOpen={savedOpen} setSavedOpen={setSavedOpen} />
-              </Route>
+            <Routes>
+              <Route
+                path="/token/:tokenAddress"
+                element={<TokenComponent savedOpen={savedOpen} setSavedOpen={setSavedOpen} />}
+              />
+              <Route
+                path="/pair/:pairAddress"
+                element={<PairComponent savedOpen={savedOpen} setSavedOpen={setSavedOpen} />}
+              />
 
-              <Route path="/home">
-                <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
-                  <GlobalPage />
-                </LayoutWrapper>
-              </Route>
-
-              <Route path="/tokens">
-                <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
-                  <AllTokensPage />
-                </LayoutWrapper>
-              </Route>
-
-              <Route path="/pairs">
-                <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
-                  <AllPairsPage />
-                </LayoutWrapper>
-              </Route>
-
-              <Route path="/accounts">
-                <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
-                  <AccountLookup />
-                </LayoutWrapper>
-              </Route>
-              <Route path="*" render={() => <Redirect to="/home" />} />
-            </Switch>
+              <Route
+                path="/account/:accountAddress"
+                element={<AccountComponent savedOpen={savedOpen} setSavedOpen={setSavedOpen} />}
+              />
+              <Route
+                path="/home"
+                element={
+                  <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+                    <GlobalPage />
+                  </LayoutWrapper>
+                }
+              />
+              <Route
+                path="/tokens"
+                element={
+                  <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+                    <AllTokensPage />
+                  </LayoutWrapper>
+                }
+              />
+              <Route
+                path="/pairs"
+                element={
+                  <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+                    <AllPairsPage />
+                  </LayoutWrapper>
+                }
+              />
+              <Route
+                path="/accounts"
+                element={
+                  <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+                    <AccountLookup />
+                  </LayoutWrapper>
+                }
+              />
+              <Route path="*" element={<Navigate to="/home" replace />} />
+            </Routes>
           </BrowserRouter>
         ) : (
           <LocalLoader fill />
