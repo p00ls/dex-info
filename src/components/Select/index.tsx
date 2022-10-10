@@ -1,7 +1,6 @@
-import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import { default as ReactSelect } from 'react-select'
+import ReactSelect, { MenuProps, OptionTypeBase } from 'react-select'
 import styled from 'styled-components'
 
 import Popout from './popout'
@@ -70,7 +69,11 @@ const DropdownIndicator = () => (
   </span>
 )
 
-const Menu = ({ children, innerRef, innerProps }) => {
+const Menu = <OptionType extends OptionTypeBase, IsMulti extends boolean>({
+  children,
+  innerRef,
+  innerProps,
+}: MenuProps<OptionType, IsMulti>) => {
   const [capEth, setCapEth] = useState(false)
   return (
     <CustomMenu ref={innerRef} {...innerProps}>
@@ -90,7 +93,22 @@ const Menu = ({ children, innerRef, innerProps }) => {
   )
 }
 
-const Select = ({ options, onChange, setCapEth, capEth, tokenSelect = false, placeholder, ...rest }) => {
+const Select = ({
+  options,
+  onChange,
+  setCapEth,
+  capEth,
+  tokenSelect = false,
+  placeholder,
+  ...rest
+}: {
+  options: any[]
+  onChange: () => void
+  setCapEth: any
+  capEth: any
+  tokenSelect: any
+  placeholder: any
+}) => {
   return tokenSelect ? (
     <ReactSelect
       placeholder={placeholder}
@@ -99,12 +117,14 @@ const Select = ({ options, onChange, setCapEth, capEth, tokenSelect = false, pla
       options={options}
       value={placeholder}
       filterOption={customFilter}
-      getOptionLabel={(option) => (
-        <MenuLabel>
-          <LogoBox>{option.logo}</LogoBox>
-          <LabelBox>{option.label}</LabelBox>
-        </MenuLabel>
-      )}
+      getOptionLabel={(option) =>
+        (
+          <MenuLabel>
+            <LogoBox>{option.logo}</LogoBox>
+            <LabelBox>{option.label}</LabelBox>
+          </MenuLabel>
+        ) as unknown as string
+      }
       styles={isMobile ? customStylesMobile : customStyles}
       {...rest}
       components={{ DropdownIndicator, Menu }}
@@ -119,11 +139,6 @@ const Select = ({ options, onChange, setCapEth, capEth, tokenSelect = false, pla
       {...rest}
     />
   )
-}
-
-Select.propTypes = {
-  options: PropTypes.array.isRequired,
-  onChange: PropTypes.func,
 }
 
 export default Select

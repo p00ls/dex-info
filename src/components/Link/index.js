@@ -1,9 +1,8 @@
-import React from 'react'
-import { Link as RebassLink } from 'rebass'
-import { Link as RouterLink } from 'react-router-dom'
+import { darken, lighten } from 'polished'
 import PropTypes from 'prop-types'
+import { Link as RouterLink } from 'react-router-dom'
+import { Link as RebassLink } from 'rebass'
 import styled from 'styled-components'
-import { lighten, darken } from 'polished'
 
 const WrappedLink = ({ external, children, ...rest }) => (
   <RebassLink

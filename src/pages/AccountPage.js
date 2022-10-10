@@ -1,26 +1,25 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react'
-import styled from 'styled-components'
-import { useUserTransactions, useUserPositions, useMiningPositions } from '../contexts/User'
-import TxnList from '../components/TxnList'
-import Panel from '../components/Panel'
-import { formattedNum } from '../utils'
-import Row, { AutoRow, RowFixed, RowBetween } from '../components/Row'
-import { AutoColumn } from '../components/Column'
-import UserChart from '../components/UserChart'
-import PairReturnsChart from '../components/PairReturnsChart'
-import PositionList from '../components/PositionList'
-import MiningPositionList from '../components/MiningPositionList'
-import { TYPE } from '../Theme'
-import { ButtonDropdown, ButtonLight } from '../components/ButtonStyled'
-import { PageWrapper, ContentWrapper, StyledIcon } from '../components'
-import DoubleTokenLogo from '../components/DoubleLogo'
-import { Bookmark, Activity } from 'react-feather'
-import Link from '../components/Link'
-import { FEE_WARNING_TOKENS } from '../constants'
-import { BasicLink } from '../components/Link'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Activity, Bookmark } from 'react-feather'
 import { useMedia } from 'react-use'
+import styled from 'styled-components'
+import { ContentWrapper, PageWrapper, StyledIcon } from '../components'
+import { ButtonDropdown, ButtonLight } from '../components/ButtonStyled'
+import { AutoColumn } from '../components/Column'
+import DoubleTokenLogo from '../components/DoubleLogo'
+import Link, { BasicLink } from '../components/Link'
+import MiningPositionList from '../components/MiningPositionList'
+import PairReturnsChart from '../components/PairReturnsChart'
+import Panel from '../components/Panel'
+import PositionList from '../components/PositionList'
+import Row, { AutoRow, RowBetween, RowFixed } from '../components/Row'
 import Search from '../components/Search'
+import TxnList from '../components/TxnList'
+import UserChart from '../components/UserChart'
+import { FEE_WARNING_TOKENS } from '../constants'
 import { useSavedAccounts } from '../contexts/LocalStorage'
+import { useMiningPositions, useUserPositions, useUserTransactions } from '../contexts/User'
+import { TYPE } from '../Theme'
+import { formattedNum } from '../utils'
 
 const AccountWrapper = styled.div`
   background-color: rgba(255, 255, 255, 0.2);
@@ -126,7 +125,7 @@ function AccountPage({ account }) {
   const [showDropdown, setShowDropdown] = useState(false)
   const [activePosition, setActivePosition] = useState()
 
-  const dynamicPositions = activePosition ? [activePosition] : positions
+  const dynamicPositions = useMemo(() => (activePosition ? [activePosition] : positions), [activePosition, positions])
 
   const aggregateFees = dynamicPositions?.reduce(function (total, position) {
     return total + position.fees.sum

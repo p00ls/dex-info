@@ -349,7 +349,7 @@ export const toSignificant = (number, significantDigits) => {
   return updated.toFormat(updated.decimalPlaces(), { groupSeparator: '' })
 }
 
-export const formattedNum = (number: number, usd = false, acceptNegatives = false) => {
+export const formattedNum = (number: number, usd = false) => {
   if (isNaN(number) || number === '' || number === undefined) {
     return usd ? '$0' : 0
   }
@@ -396,7 +396,7 @@ export function rawPercent(percentRaw) {
   return percent.toFixed(0) + '%'
 }
 
-export function formattedPercent(percent, useBrackets = false) {
+export function formattedPercent(percent) {
   percent = parseFloat(percent)
   if (!percent || percent === 0) {
     return <Text fontWeight={500}>0%</Text>

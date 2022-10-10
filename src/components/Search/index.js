@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import Row, { RowFixed } from '../Row'
-import TokenLogo from '../TokenLogo'
 import { Search as SearchIcon, X } from 'react-feather'
 import { BasicLink } from '../Link'
+import Row, { RowFixed } from '../Row'
+import TokenLogo from '../TokenLogo'
 
-import { useAllTokenData, useTokenData } from '../../contexts/TokenData'
-import { useAllPairData, usePairData } from '../../contexts/PairData'
-import DoubleTokenLogo from '../DoubleLogo'
 import { useMedia } from 'react-use'
+import { PAIR_BLACKLIST, TOKEN_BLACKLIST } from '../../constants'
 import { useAllPairsInUniswap, useAllTokensInUniswap } from '../../contexts/GlobalData'
-import { TOKEN_BLACKLIST, PAIR_BLACKLIST } from '../../constants'
+import { useAllPairData, usePairData } from '../../contexts/PairData'
+import { useAllTokenData, useTokenData } from '../../contexts/TokenData'
+import DoubleTokenLogo from '../DoubleLogo'
 
 import { transparentize } from 'polished'
 import { client } from '../../apollo/client'
 import { PAIR_SEARCH, TOKEN_SEARCH } from '../../apollo/queries'
-import FormattedName from '../FormattedName'
 import { TYPE } from '../../Theme'
 import { updateNameData } from '../../utils/data'
+import FormattedName from '../FormattedName'
 
 const Container = styled.div`
   height: 48px;
@@ -234,16 +234,19 @@ export const Search = ({ small = false }) => {
     })
   )
 
-  let uniqueTokens = []
-  let found = {}
-  allTokens &&
-    allTokens.map((token) => {
-      if (!found[token.id]) {
-        found[token.id] = true
-        uniqueTokens.push(token)
-      }
-      return true
-    })
+  const uniqueTokens = useMemo(() => {
+    let uniqueTokens = []
+    let found = {}
+    allTokens &&
+      allTokens.map((token) => {
+        if (!found[token.id]) {
+          found[token.id] = true
+          uniqueTokens.push(token)
+        }
+        return true
+      })
+    return uniqueTokens
+  }, [allTokens])
 
   allPairs = allPairs.concat(
     searchedPairs.filter((searchedPair) => {
@@ -258,16 +261,19 @@ export const Search = ({ small = false }) => {
     })
   )
 
-  let uniquePairs = []
-  let pairsFound = {}
-  allPairs &&
-    allPairs.map((pair) => {
-      if (!pairsFound[pair.id]) {
-        pairsFound[pair.id] = true
-        uniquePairs.push(pair)
-      }
-      return true
-    })
+  const uniquePairs = useMemo(() => {
+    let uniquePairs = []
+    let pairsFound = {}
+    allPairs &&
+      allPairs.map((pair) => {
+        if (!pairsFound[pair.id]) {
+          pairsFound[pair.id] = true
+          uniquePairs.push(pair)
+        }
+        return true
+      })
+    return uniquePairs
+  }, [allPairs])
 
   const filteredTokenList = useMemo(() => {
     return uniqueTokens

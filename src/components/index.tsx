@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import Link from './Link'
 
+import { FC, PropsWithChildren } from 'react'
 import { urls } from '../utils'
 
 const Divider = styled(Box)`
@@ -47,13 +48,13 @@ export const IconWrapper = styled.div`
   }
 `
 
-const Hint = ({ children, ...rest }) => (
+const Hint: FC<PropsWithChildren<any>> = ({ children, ...rest }) => (
   <Text fontSize={16} weight={500} {...rest}>
     {children}
   </Text>
 )
 
-const Address = ({ address, token, ...rest }) => (
+const Address = ({ address, token, ...rest }: { address: string; token: string } & any) => (
   <Link
     color="button"
     href={token ? urls.showToken(address) : urls.showAddress(address)}
