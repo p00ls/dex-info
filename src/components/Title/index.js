@@ -13,15 +13,13 @@ const TitleWrapper = styled.div`
   text-decoration: none;
   z-index: 10;
   width: 100%;
-  &:hover {
-    cursor: pointer;
-  }
 `
 
 const UniIcon = styled(Link)`
   transition: transform 0.3s ease;
   :hover {
     transform: rotate(-5deg);
+    cursor: pointer;
   }
 `
 
@@ -43,7 +41,7 @@ export default function Title() {
   const below1080 = useMedia('(max-width: 1080px)')
 
   return (
-    <TitleWrapper onClick={() => navigate('/')}>
+    <TitleWrapper>
       <Flex alignItems="center" style={{ justifyContent: 'space-between' }}>
         <RowFixed>
           <UniIcon id="link" onClick={() => navigate('/')}>
