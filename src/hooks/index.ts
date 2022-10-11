@@ -35,7 +35,7 @@ export const useColor = (tokenAddress: string, token?: string) => {
 export function useCopyClipboard(timeout = 500) {
   const [isCopied, setIsCopied] = useState(false)
 
-  const staticCopy = useCallback((text) => {
+  const staticCopy = useCallback((text: string) => {
     const didCopy = copy(text)
     setIsCopied(didCopy)
   }, [])
@@ -52,7 +52,7 @@ export function useCopyClipboard(timeout = 500) {
     }
   }, [isCopied, setIsCopied, timeout])
 
-  return [isCopied, staticCopy]
+  return [isCopied, staticCopy] as const
 }
 
 export const useOutsideClick = (ref, ref2, callback) => {

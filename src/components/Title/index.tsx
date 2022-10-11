@@ -23,7 +23,7 @@ const UniIcon = styled(Link)`
   }
 `
 
-const Option = styled.div`
+const Option = styled.div<{ activeText?: boolean }>`
   font-weight: 500;
   font-size: 14px;
   opacity: ${({ activeText }) => (activeText ? 1 : 0.6)};

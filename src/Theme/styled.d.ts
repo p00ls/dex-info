@@ -62,5 +62,8 @@ declare module 'styled-components' {
     blue: string
 
     background: string
+
+    // other
+    flexRowNoWrap?: any
   }
 }
