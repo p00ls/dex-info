@@ -1,25 +1,26 @@
-import React, { createContext, useContext, useReducer, useMemo, useCallback, useEffect, useState } from 'react'
-import { client } from '../apollo/client'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { useTimeframe } from './Application'
+import weekOfYear from 'dayjs/plugin/weekOfYear'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useReducer, useState } from 'react'
+import { client } from '../apollo/client'
 import {
-  getPercentChange,
-  getBlockFromTimestamp,
-  getBlocksFromTimestamps,
-  get2DayPercentChange,
-  getTimeframe,
-} from '../utils'
-import {
-  GLOBAL_DATA,
-  GLOBAL_TXNS,
-  GLOBAL_CHART,
-  ETH_PRICE,
   ALL_PAIRS,
   ALL_TOKENS,
+  ETH_PRICE,
+  GlobalData,
+  GLOBAL_CHART,
+  GLOBAL_DATA,
+  GLOBAL_TXNS,
   TOP_LPS_PER_PAIRS,
 } from '../apollo/queries'
-import weekOfYear from 'dayjs/plugin/weekOfYear'
+import {
+  get2DayPercentChange,
+  getBlockFromTimestamp,
+  getBlocksFromTimestamps,
+  getPercentChange,
+  getTimeframe,
+} from '../utils'
+import { useTimeframe } from './Application'
 import { useAllPairData } from './PairData'
 import { useTokenChartDataCombined } from './TokenData'
 const UPDATE = 'UPDATE'
@@ -43,10 +44,31 @@ const offsetVolumes = [
 dayjs.extend(utc)
 dayjs.extend(weekOfYear)
 
-const GlobalDataContext = createContext()
+export type GlobalDataState = {
+  totalVolumeUSD: any
+  [ETH_PRICE_KEY]?: number
+  oneDayPrice?: number
+  ethPriceChange?: number
+}
+export type GlobalDataUpdaters = {
+  update: () => void
+  updateTransactions: () => void
+  updateChart: () => void
+  updateEthPrice: (newPrice: number, oneDayPrice: number, priceChange: number) => void
+  updateAllPairsInUniswap: () => void
+  updateAllTokensInUniswap: () => void
+  updateTopLps: () => void
+}
+export type GlobalDataContext = [GlobalDataState, GlobalDataUpdaters]
 
-function useGlobalDataContext() {
-  return useContext(GlobalDataContext)
+const GlobalDataContext = createContext<GlobalDataContext | null>(null)
+
+const useGlobalDataContext = (): GlobalDataContext => {
+  const context = useContext(GlobalDataContext)
+  if (!context) {
+    throw new Error('useGlobalDataContext must be used within a GlobalDataProvider')
+  }
+  return context
 }
 
 function reducer(state, { type, payload }) {
@@ -113,7 +135,7 @@ function reducer(state, { type, payload }) {
   }
 }
 
-export default function Provider({ children }) {
+const GlobalDataProvider = ({ children }: { children?: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, {})
   const update = useCallback((data) => {
     dispatch({
@@ -143,7 +165,7 @@ export default function Provider({ children }) {
     })
   }, [])
 
-  const updateEthPrice = useCallback((ethPrice, oneDayPrice, ethPriceChange) => {
+  const updateEthPrice = useCallback((ethPrice: number, oneDayPrice: number, ethPriceChange: number) => {
     dispatch({
       type: UPDATE_ETH_PRICE,
       payload: {
@@ -180,6 +202,7 @@ export default function Provider({ children }) {
       },
     })
   }, [])
+
   return (
     <GlobalDataContext.Provider
       value={useMemo(
@@ -212,6 +235,8 @@ export default function Provider({ children }) {
   )
 }
 
+export default GlobalDataProvider
+
 /**
  * Gets all the global data for the overview page.
  * Needs current eth price and the old eth price to get
@@ -220,11 +245,29 @@ export default function Provider({ children }) {
  * @param {*} oldEthPrice
  */
 
-async function getGlobalData(ethPrice, oldEthPrice) {
+type Data = {
+  id?: string
+  totalVolumeUSD?: string
+  totalVolumeETH?: string
+  untrackedVolumeUSD?: string
+  totalLiquidityUSD?: string | number
+  totalLiquidityETH?: string
+  txCount?: string
+  pairCount?: number
+  oneDayVolumeUSD?: number
+  oneWeekVolume?: number
+  weeklyVolumeChange?: number
+  volumeChangeUSD?: number
+  liquidityChangeUSD?: number
+  oneDayTxns?: number
+  txnChange?: number
+}
+
+async function getGlobalData(ethPrice: number, oldEthPrice: number) {
   // data for each day , historic data used for % changes
-  let data = {}
-  let oneDayData = {}
-  let twoDayData = {}
+  let data: Data = {}
+  let oneDayData: Data = {}
+  let twoDayData: Data = {}
 
   try {
     // get timestamps for the days
@@ -235,7 +278,7 @@ async function getGlobalData(ethPrice, oldEthPrice) {
     const utcTwoWeeksBack = utcCurrentTime.subtract(2, 'week').unix()
 
     // get the blocks needed for time travel queries
-    let [oneDayBlock, twoDayBlock, oneWeekBlock, twoWeekBlock] = await getBlocksFromTimestamps([
+    const [oneDayBlock, twoDayBlock, oneWeekBlock, twoWeekBlock] = await getBlocksFromTimestamps([
       utcOneDayBack,
       utcTwoDaysBack,
       utcOneWeekBack,
@@ -243,39 +286,39 @@ async function getGlobalData(ethPrice, oldEthPrice) {
     ])
 
     // fetch the global data
-    let result = await client.query({
+    const result = await client.query<GlobalData>({
       query: GLOBAL_DATA(),
       fetchPolicy: 'cache-first',
     })
     data = result.data.uniswapFactories[0]
 
     // fetch the historical data
-    let oneDayResult = await client.query({
+    const oneDayResult = await client.query<GlobalData>({
       query: GLOBAL_DATA(oneDayBlock?.number),
       fetchPolicy: 'cache-first',
     })
     oneDayData = oneDayResult.data.uniswapFactories[0]
 
-    let twoDayResult = await client.query({
+    const twoDayResult = await client.query<GlobalData>({
       query: GLOBAL_DATA(twoDayBlock?.number),
       fetchPolicy: 'cache-first',
     })
     twoDayData = twoDayResult.data.uniswapFactories[0]
 
-    let oneWeekResult = await client.query({
+    const oneWeekResult = await client.query<GlobalData>({
       query: GLOBAL_DATA(oneWeekBlock?.number),
       fetchPolicy: 'cache-first',
     })
     const oneWeekData = oneWeekResult.data.uniswapFactories[0]
 
-    let twoWeekResult = await client.query({
+    const twoWeekResult = await client.query<GlobalData>({
       query: GLOBAL_DATA(twoWeekBlock?.number),
       fetchPolicy: 'cache-first',
     })
     const twoWeekData = twoWeekResult.data.uniswapFactories[0]
 
     if (data && oneDayData && twoDayData && twoWeekData) {
-      let [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
+      const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
         data.totalVolumeUSD,
         oneDayData.totalVolumeUSD,
         twoDayData.totalVolumeUSD
@@ -294,10 +337,10 @@ async function getGlobalData(ethPrice, oldEthPrice) {
       )
 
       // format the total liquidity in USD
-      data.totalLiquidityUSD = data.totalLiquidityETH * ethPrice
+      data.totalLiquidityUSD = parseFloat(data.totalLiquidityETH) * ethPrice
       const liquidityChangeUSD = getPercentChange(
-        data.totalLiquidityETH * ethPrice,
-        oneDayData.totalLiquidityETH * oldEthPrice
+        parseFloat(data.totalLiquidityETH) * ethPrice,
+        parseFloat(oneDayData.totalLiquidityETH) * oldEthPrice
       )
 
       // add relevant fields with the calculated amounts
@@ -326,14 +369,14 @@ let checked = false
 
 const getChartData = async (oldestDateToFetch, offsetData) => {
   let data = []
-  let weeklyData = []
+  const weeklyData = []
   const utcEndTime = dayjs.utc()
   let skip = 0
   let allFound = false
 
   try {
     while (!allFound) {
-      let result = await client.query({
+      const result = await client.query({
         query: GLOBAL_CHART,
         variables: {
           startTime: oldestDateToFetch,
@@ -349,8 +392,8 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
     }
 
     if (data) {
-      let dayIndexSet = new Set()
-      let dayIndexArray = []
+      const dayIndexSet = new Set()
+      const dayIndexArray = []
       const oneDay = 24 * 60 * 60
 
       // for each day, parse the daily volume and format for chart array
@@ -368,7 +411,7 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
       let index = 1
       while (timestamp < utcEndTime.unix() - oneDay) {
         const nextDay = timestamp + oneDay
-        let currentDayIndex = (nextDay / oneDay).toFixed(0)
+        const currentDayIndex = (nextDay / oneDay).toFixed(0)
 
         if (!dayIndexSet.has(currentDayIndex)) {
           data.push({
@@ -428,10 +471,10 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
  * Get and format transactions for global page
  */
 const getGlobalTransactions = async () => {
-  let transactions = {}
+  const transactions = {}
 
   try {
-    let result = await client.query({
+    const result = await client.query({
       query: GLOBAL_TXNS,
       fetchPolicy: 'cache-first',
     })
@@ -476,12 +519,12 @@ const getEthPrice = async () => {
   let priceChangeETH = 0
 
   try {
-    let oneDayBlock = await getBlockFromTimestamp(utcOneDayBack)
-    let result = await client.query({
+    const oneDayBlock = await getBlockFromTimestamp(utcOneDayBack)
+    const result = await client.query({
       query: ETH_PRICE(),
       fetchPolicy: 'cache-first',
     })
-    let resultOneDay = await client.query({
+    const resultOneDay = await client.query({
       query: ETH_PRICE(oneDayBlock),
       fetchPolicy: 'cache-first',
     })
@@ -494,7 +537,7 @@ const getEthPrice = async () => {
     console.log(e)
   }
 
-  return [ethPrice, ethPriceOneDay, priceChangeETH]
+  return [ethPrice, ethPriceOneDay, priceChangeETH] as const
 }
 
 const PAIRS_TO_FETCH = 500
@@ -509,7 +552,7 @@ async function getAllPairsOnUniswap() {
     let pairs = []
     let skipCount = 0
     while (!allFound) {
-      let result = await client.query({
+      const result = await client.query({
         query: ALL_PAIRS,
         variables: {
           skip: skipCount,
@@ -537,7 +580,7 @@ async function getAllTokensOnUniswap() {
     let skipCount = 0
     let tokens = []
     while (!allFound) {
-      let result = await client.query({
+      const result = await client.query({
         query: ALL_TOKENS,
         variables: {
           skip: skipCount,
@@ -569,14 +612,14 @@ export function useGlobalData() {
 
   useEffect(() => {
     async function fetchData() {
-      let globalData = await getGlobalData(ethPrice, oldEthPrice)
+      const globalData = await getGlobalData(ethPrice, oldEthPrice)
 
       globalData && update(globalData)
 
-      let allPairs = await getAllPairsOnUniswap()
+      const allPairs = await getAllPairsOnUniswap()
       updateAllPairsInUniswap(allPairs)
 
-      let allTokens = await getAllTokensOnUniswap()
+      const allTokens = await getAllTokensOnUniswap()
       updateAllTokensInUniswap(allTokens)
     }
     if (!data && ethPrice && oldEthPrice) {
@@ -602,7 +645,7 @@ export function useGlobalChartData() {
    */
   useEffect(() => {
     // based on window, get starttime
-    let startTime = getTimeframe(activeWindow)
+    const startTime = getTimeframe(activeWindow)
 
     if ((activeWindow && startTime < oldestDateFetch) || !oldestDateFetch) {
       setOldestDateFetched(startTime)
@@ -619,7 +662,7 @@ export function useGlobalChartData() {
   useEffect(() => {
     async function fetchData() {
       // historical stuff for chart
-      let [newChartData, newWeeklyData] = await getChartData(oldestDateFetch, combinedData)
+      const [newChartData, newWeeklyData] = await getChartData(oldestDateFetch, combinedData)
       updateChart(newChartData, newWeeklyData)
     }
     if (oldestDateFetch && !(chartDataDaily && chartDataWeekly) && combinedData) {
@@ -636,7 +679,7 @@ export function useGlobalTransactions() {
   useEffect(() => {
     async function fetchData() {
       if (!transactions) {
-        let txns = await getGlobalTransactions()
+        const txns = await getGlobalTransactions()
         updateTransactions(txns)
       }
     }
@@ -652,7 +695,7 @@ export function useEthPrice() {
   useEffect(() => {
     async function checkForEthPrice() {
       if (!ethPrice) {
-        let [newPrice, oneDayPrice, priceChange] = await getEthPrice()
+        const [newPrice, oneDayPrice, priceChange] = await getEthPrice()
         updateEthPrice(newPrice, oneDayPrice, priceChange)
       }
     }
@@ -664,14 +707,14 @@ export function useEthPrice() {
 
 export function useAllPairsInUniswap() {
   const [state] = useGlobalDataContext()
-  let allPairs = state?.allPairs
+  const allPairs = state?.allPairs
 
   return allPairs || []
 }
 
 export function useAllTokensInUniswap() {
   const [state] = useGlobalDataContext()
-  let allTokens = state?.allTokens
+  const allTokens = state?.allTokens
 
   return allTokens || []
 }
@@ -682,19 +725,19 @@ export function useAllTokensInUniswap() {
  */
 export function useTopLps() {
   const [state, { updateTopLps }] = useGlobalDataContext()
-  let topLps = state?.topLps
+  const topLps = state?.topLps
 
   const allPairs = useAllPairData()
 
   useEffect(() => {
     async function fetchData() {
       // get top 20 by reserves
-      let topPairs = Object.keys(allPairs)
+      const topPairs = Object.keys(allPairs)
         ?.sort((a, b) => parseFloat(allPairs[a].reserveUSD > allPairs[b].reserveUSD ? -1 : 1))
         ?.slice(0, 99)
         .map((pair) => pair)
 
-      let topLpLists = await Promise.all(
+      const topLpLists = await Promise.all(
         topPairs.map(async (pair) => {
           // for each one, fetch top LPs
           try {

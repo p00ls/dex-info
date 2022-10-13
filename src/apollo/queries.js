@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { FACTORY_ADDRESS, BUNDLE_ID } from '../constants'
+import { BUNDLE_ID, FACTORY_ADDRESS } from '../constants'
 
 export const SUBGRAPH_HEALTH = gql`
   query health {
@@ -432,6 +432,18 @@ export const GLOBAL_CHART = gql`
     }
   }
 `
+export type GlobalData = {
+  uniswapFactories: Array<{
+    id: string,
+    totalVolumeUSD: string,
+    totalVolumeETH: string,
+    untrackedVolumeUSD: string,
+    totalLiquidityUSD: string,
+    totalLiquidityETH: string,
+    txCount: string,
+    pairCount: number,
+  }>,
+}
 
 export const GLOBAL_DATA = (block) => {
   const queryString = ` query uniswapFactories {
