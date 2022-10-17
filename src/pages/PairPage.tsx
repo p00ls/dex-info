@@ -219,7 +219,11 @@ const PairPage = ({ pairAddress }: { pairAddress: string }) => {
       <span />
       <Warning
         type={'pair'}
-        show={!dismissed && listedTokens && !(listedTokens.includes(token0?.id) && listedTokens.includes(token1?.id))}
+        show={
+          !dismissed &&
+          listedTokens &&
+          !(listedTokens.some((t) => t.address === token0?.id) && listedTokens.some((t) => t.address === token1?.id))
+        }
         setShow={markAsDismissed}
         address={pairAddress}
       />
@@ -232,7 +236,9 @@ const PairPage = ({ pairAddress }: { pairAddress: string }) => {
         </RowBetween>
         <WarningGrouping
           disabled={
-            !dismissed && listedTokens && !(listedTokens.includes(token0?.id) && listedTokens.includes(token1?.id))
+            !dismissed &&
+            listedTokens &&
+            !(listedTokens.some((t) => t.address === token0?.id) && listedTokens.some((t) => t.address === token1?.id))
           }
         >
           <DashboardWrapper>

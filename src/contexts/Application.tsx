@@ -1,10 +1,20 @@
-import React, { createContext, useContext, useReducer, useMemo, useCallback, useState, useEffect } from 'react'
-import { timeframeOptions, SUPPORTED_LIST_URLS__NO_ENS } from '../constants'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import getTokenList from '../utils/tokenLists'
+import {
+  createContext,
+  ReactNode,
+  Reducer,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react'
 import { healthClient } from '../apollo/client'
 import { SUBGRAPH_HEALTH } from '../apollo/queries'
+import { SUPPORTED_LIST_URLS__NO_ENS, timeframeOptions } from '../constants'
+import getTokenList from '../utils/tokenLists'
 dayjs.extend(utc)
 
 const UPDATE = 'UPDATE'
@@ -21,13 +31,45 @@ const SESSION_START = 'SESSION_START'
 const LATEST_BLOCK = 'LATEST_BLOCK'
 const HEAD_BLOCK = 'HEAD_BLOCK'
 
-const ApplicationContext = createContext()
-
-function useApplicationContext() {
-  return useContext(ApplicationContext)
+type SupportedToken = {
+  address: string
+  chainId: number
+  decimals: number
+  logoURI: string
+  name: string
+  symbol: string
 }
 
-function reducer(state, { type, payload }) {
+type ApplicationContextState = {
+  [CURRENCY]: string
+  [TIME_KEY]: string
+  [SESSION_START]?: number
+  [LATEST_BLOCK]?: number
+  [HEAD_BLOCK]?: number
+  [SUPPORTED_TOKENS]?: SupportedToken[]
+}
+
+type ApplicationContextType = [
+  ApplicationContextState,
+  {
+    update: (currency: string) => void
+    updateTimeframe: (timeFrame: string) => void
+    updateSessionStart: (timestamp: number) => void
+    updateLatestBlock: (block: number) => void
+    updateHeadBlock: (block: number) => void
+    updateSupportedTokens: (supportedTokens: SupportedToken[]) => void
+  }
+]
+
+const ApplicationContext = createContext<ApplicationContextType | null>(null)
+
+function useApplicationContext(): ApplicationContextType {
+  const context = useContext(ApplicationContext)
+  if (!context) throw new Error('useApplicationContext must be used within a ApplicationContextProvider')
+  return context
+}
+
+const reducer: Reducer<ApplicationContextState, any> = (state, { type, payload }) => {
   switch (type) {
     case UPDATE: {
       const { currency } = payload
@@ -81,12 +123,12 @@ function reducer(state, { type, payload }) {
   }
 }
 
-const INITIAL_STATE = {
+const INITIAL_STATE: ApplicationContextState = {
   CURRENCY: 'USD',
   TIME_KEY: timeframeOptions.ALL_TIME,
 }
 
-export default function Provider({ children }) {
+const Provider = ({ children }: { children?: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
   const update = useCallback((currency) => {
     dispatch({
@@ -144,6 +186,27 @@ export default function Provider({ children }) {
     })
   }, [])
 
+  useEffect(() => {
+    async function fetchList() {
+      const allFetched = await SUPPORTED_LIST_URLS__NO_ENS.reduce(async (fetchedTokens, url) => {
+        const tokensSoFar = await fetchedTokens
+        const newTokens = await getTokenList(url)
+        if (newTokens?.tokens) {
+          return Promise.resolve([...tokensSoFar, ...newTokens.tokens])
+        }
+      }, Promise.resolve([]))
+
+      updateSupportedTokens(allFetched)
+    }
+    if (!state[SUPPORTED_TOKENS]) {
+      try {
+        fetchList()
+      } catch {
+        console.log('Error fetching')
+      }
+    }
+  }, [state, updateSupportedTokens])
+
   return (
     <ApplicationContext.Provider
       value={useMemo(
@@ -198,10 +261,12 @@ export function useLatestBlocks() {
   return [latestBlock, headBlock]
 }
 
+export default Provider
+
 export function useCurrentCurrency() {
   const [state, { update }] = useApplicationContext()
   const toggleCurrency = useCallback(() => {
-    if (state.currency === 'ETH') {
+    if (state['CURRENCY'] === 'ETH') {
       update('USD')
     } else {
       update('ETH')
@@ -218,11 +283,11 @@ export function useTimeframe() {
 
 export function useStartTimestamp() {
   const [activeWindow] = useTimeframe()
-  const [startDateTimestamp, setStartDateTimestamp] = useState()
+  const [startDateTimestamp, setStartDateTimestamp] = useState<number | undefined>()
 
   // monitor the old date fetched
   useEffect(() => {
-    let startTime =
+    const startTime =
       dayjs
         .utc()
         .subtract(
@@ -260,33 +325,12 @@ export function useSessionStart() {
     return () => clearInterval(interval)
   }, [seconds, sessionStart])
 
-  return parseInt(seconds / 1000)
+  return parseInt((seconds / 1000).toString())
 }
 
 export function useListedTokens() {
-  const [state, { updateSupportedTokens }] = useApplicationContext()
+  const [state] = useApplicationContext()
   const supportedTokens = state?.[SUPPORTED_TOKENS]
-
-  useEffect(() => {
-    async function fetchList() {
-      const allFetched = await SUPPORTED_LIST_URLS__NO_ENS.reduce(async (fetchedTokens, url) => {
-        const tokensSoFar = await fetchedTokens
-        const newTokens = await getTokenList(url)
-        if (newTokens?.tokens) {
-          return Promise.resolve([...tokensSoFar, ...newTokens.tokens])
-        }
-      }, Promise.resolve([]))
-      let formatted = allFetched?.map((t) => t.address.toLowerCase())
-      updateSupportedTokens(formatted)
-    }
-    if (!supportedTokens) {
-      try {
-        fetchList()
-      } catch {
-        console.log('Error fetching')
-      }
-    }
-  }, [updateSupportedTokens, supportedTokens])
 
   return supportedTokens
 }

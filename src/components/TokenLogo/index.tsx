@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import EthereumLogo from '../../assets/eth.png'
 import { WETH_ADDRESS } from '../../constants/index.js'
+import { useListedTokens } from '../../contexts/Application'
 import { isAddress } from '../../utils/index.js'
 
 const BAD_IMAGES = {}
@@ -31,6 +32,17 @@ const StyledEthereumLogo = styled.div<{ size: string }>`
   }
 `
 
+const useTokenLogoPath = (address: string): string => {
+  const listedTokens = useListedTokens()
+
+  const token = listedTokens?.find((token) => token.address === address)
+  if (token) return token.logoURI
+
+  return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${isAddress(
+    address
+  )}/logo.png`
+}
+
 export default function TokenLogo({
   address,
   header = false,
@@ -42,6 +54,7 @@ export default function TokenLogo({
   size?: string
 } & React.HTMLAttributes<HTMLSpanElement>) {
   const [error, setError] = useState(false)
+  const path = useTokenLogoPath(address)
 
   useEffect(() => {
     setError(false)
@@ -80,10 +93,6 @@ export default function TokenLogo({
       </StyledEthereumLogo>
     )
   }
-
-  const path = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${isAddress(
-    address
-  )}/logo.png`
 
   return (
     <Inline>

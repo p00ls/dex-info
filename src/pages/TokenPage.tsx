@@ -191,7 +191,7 @@ const TokenPage = ({ address }: { address: string }) => {
       <ThemedBackground backgroundColor={transparentize(0.6, backgroundColor)} />
       <Warning
         type={'token'}
-        show={!dismissed && listedTokens && !listedTokens.includes(address)}
+        show={!dismissed && listedTokens && !listedTokens.some((t) => t.address === address)}
         setShow={markAsDismissed}
         address={address}
       />
@@ -214,7 +214,7 @@ const TokenPage = ({ address }: { address: string }) => {
           </AutoRow>
           {!below600 && <Search small={true} />}
         </RowBetween>
-        <WarningGrouping disabled={!dismissed && listedTokens && !listedTokens.includes(address)}>
+        <WarningGrouping disabled={!dismissed && listedTokens && !listedTokens.some((t) => t.address === address)}>
           <DashboardWrapper style={{ marginTop: below1080 ? '0' : '1rem' }}>
             <RowBetween
               style={{
