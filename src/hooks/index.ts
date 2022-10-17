@@ -3,14 +3,25 @@ import Vibrant from 'node-vibrant'
 import { shade } from 'polished'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { hex } from 'wcag-contrast'
+import { useListedTokens } from '../contexts/Application'
 import { isAddress } from '../utils'
+
+export const useTokenLogoPath = (address: string): string => {
+  const listedTokens = useListedTokens()
+
+  const token = listedTokens?.find((token) => token.address === address)
+  if (token) return token.logoURI
+
+  return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${isAddress(
+    address
+  )}/logo.png`
+}
 
 export const useColor = (tokenAddress: string, token?: string) => {
   const [color, setColor] = useState('#2172E5')
+  const path = useTokenLogoPath(tokenAddress)
+
   if (tokenAddress) {
-    const path = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${isAddress(
-      tokenAddress
-    )}/logo.png`
     if (path) {
       Vibrant.from(path).getPalette((err, palette) => {
         if (palette && palette.Vibrant) {
