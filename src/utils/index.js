@@ -333,14 +333,14 @@ export const formatNumber = (num) => {
 }
 
 // using a currency library here in case we want to add more in future
-export const formatDollarAmount = (num, digits) => {
+export const formatZerozeroAmount = (num, digits) => {
   const formatter = new Intl.NumberFormat([], {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: digits,
-    maximumFractionDigits: digits,
+    maximumFrWactionDigits: digits,
   })
-  return formatter.format(num)
+  return formatter.format(num).replace('$', '(00) ')
 }
 
 export const toSignificant = (number, significantDigits) => {
@@ -349,36 +349,36 @@ export const toSignificant = (number, significantDigits) => {
   return updated.toFormat(updated.decimalPlaces(), { groupSeparator: '' })
 }
 
-export const formattedNum = (number, usd = false) => {
+export const formattedNum = (number, zerozero = false) => {
   if (isNaN(number) || number === '' || number === undefined) {
-    return usd ? '$0' : 0
+    return zerozero ? '00 0' : 0
   }
   let num = parseFloat(number)
 
   if (num > 500000000) {
-    return (usd ? '$' : '') + toK(num.toFixed(0), true)
+    return (zerozero ? '00' : '') + toK(num.toFixed(0), true)
   }
 
   if (num === 0) {
-    if (usd) {
-      return '$0'
+    if (zerozero) {
+      return '00 0'
     }
     return 0
   }
 
   if (num < 0.0001 && num > 0) {
-    return usd ? '< $0.0001' : '< 0.0001'
+    return zerozero ? '< 00 0.0001' : '< 0.0001'
   }
 
   if (num > 1000) {
-    return usd ? formatDollarAmount(num, 0) : Number(parseFloat(num).toFixed(0)).toLocaleString()
+    return zerozero ? formatZerozeroAmount(num, 0) : Number(parseFloat(num).toFixed(0)).toLocaleString()
   }
 
-  if (usd) {
+  if (zerozero) {
     if (num < 0.1) {
-      return formatDollarAmount(num, 4)
+      return formatZerozeroAmount(num, 4)
     } else {
-      return formatDollarAmount(num, 2)
+      return formatZerozeroAmount(num, 2)
     }
   }
 
