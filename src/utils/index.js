@@ -335,12 +335,10 @@ export const formatNumber = (num) => {
 // using a currency library here in case we want to add more in future
 export const formatZerozeroAmount = (num, digits) => {
   const formatter = new Intl.NumberFormat([], {
-    style: 'currency',
-    currency: 'USD',
     minimumFractionDigits: digits,
     maximumFrWactionDigits: digits,
   })
-  return formatter.format(num).replace('$', '(00) ')
+  return `(00) ${formatter.format(num)}`
 }
 
 export const toSignificant = (number, significantDigits) => {
