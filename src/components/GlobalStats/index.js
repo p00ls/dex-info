@@ -36,7 +36,7 @@ export default function GlobalStats() {
     <Header>
       <RowBetween style={{ padding: below816 ? '0.5rem' : '.5rem' }}>
         <RowFixed>
-          {!below400 && (
+          {false && (
             <TYPE.main
               mr={'1rem'}
               onMouseEnter={() => {
