@@ -162,7 +162,7 @@ function SideNav() {
           <AutoColumn gap="0.5rem" style={{ marginLeft: '.75rem', marginBottom: '4rem' }}>
             <HeaderText>
               <Link href="https://www.zeroze.ro/" target="_blank">
-                Zeroze.ro
+                zeroze.ro
               </Link>
             </HeaderText>
             <HeaderText>

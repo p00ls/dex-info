@@ -1,6 +1,6 @@
 {
-  "short_name": "Zerozero Info",
-  "name": "View statistics for Zerozero exchanges.",
+  "short_name": "zerozero Info",
+  "name": "View statistics for zerozero exchanges.",
   "icons": [
     {
       "src": "favicon.ico",

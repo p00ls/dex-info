@@ -48,19 +48,19 @@ const theme = (darkMode: boolean, color?: string): DefaultTheme => ({
   divider: darkMode ? 'rgba(43, 43, 43, 0.435)' : 'rgba(43, 43, 43, 0.035)',
 
   //primary colors
-  primary1: darkMode ? '#2172E5' : '#ff007a',
-  primary2: darkMode ? '#3680E7' : '#FF8CC3',
-  primary3: darkMode ? '#4D8FEA' : '#FF99C9',
+  primary1: darkMode ? '#2172E5' : '#A1A1A1',
+  primary2: darkMode ? '#3680E7' : '#C1C1C1',
+  primary3: darkMode ? '#4D8FEA' : '#D1D1D1',
   primary4: darkMode ? '#376bad70' : '#F6DDE8',
   primary5: darkMode ? '#153d6f70' : '#FDEAF1',
 
   // color text
-  primaryText1: darkMode ? '#6da8ff' : '#ff007a',
+  primaryText1: darkMode ? '#6da8ff' : '#A1A1A1',
 
   // secondary colors
-  secondary1: darkMode ? '#2172E5' : '#ff007a',
-  secondary2: darkMode ? '#17000b26' : '#F6DDE8',
-  secondary3: darkMode ? '#17000b26' : '#FDEAF1',
+  secondary1: darkMode ? '#2172E5' : '#A1A1A1',
+  secondary2: darkMode ? '#17000b26' : '#D1D1D1',
+  secondary3: darkMode ? '#17000b26' : '#D1D1D1',
 
   shadow1: darkMode ? '#000' : '#2F80ED',
 

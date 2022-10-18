@@ -39,13 +39,13 @@ export function getTimeframe(timeWindow) {
 export function getPoolLink(token0Address, token1Address = null, remove = false) {
   if (!token1Address) {
     return (
-      `https://app.zeroze.ro/#/` +
+      `https://app.zerozero.markets/#/` +
       (remove ? `remove` : `add`) +
       `/v2/${token0Address === WETH_ADDRESS.toLowerCase() ? 'ETH' : token0Address}/${'ETH'}`
     )
   } else {
     return (
-      `https://app.zeroze.ro/#/` +
+      `https://app.zerozero.markets/#/` +
       (remove ? `remove` : `add`) +
       `/v2/${token0Address === WETH_ADDRESS.toLowerCase() ? 'ETH' : token0Address}/${
         token1Address === WETH_ADDRESS.toLowerCase() ? 'ETH' : token1Address
@@ -56,20 +56,20 @@ export function getPoolLink(token0Address, token1Address = null, remove = false)
 
 export function getSwapLink(token0Address, token1Address = null) {
   if (!token1Address) {
-    return `https://app.zeroze.ro/#/swap?inputCurrency=${token0Address}`
+    return `https://app.zerozero.markets/#/swap?inputCurrency=${token0Address}`
   } else {
-    return `https://app.zeroze.ro/#/swap?inputCurrency=${
+    return `https://app.zerozero.markets/#/swap?inputCurrency=${
       token0Address === WETH_ADDRESS.toLowerCase() ? 'ETH' : token0Address
     }&outputCurrency=${token1Address === WETH_ADDRESS.toLowerCase() ? 'ETH' : token1Address}`
   }
 }
 
 export function getMiningPoolLink(token0Address) {
-  return `https://app.zeroze.ro/#/uni/ETH/${token0Address}`
+  return `https://app.zerozero.markets/#/uni/ETH/${token0Address}`
 }
 
 export function getUniswapAppLink(linkVariable) {
-  let baseUniswapUrl = 'https://app.zeroze.ro/#/uni'
+  let baseUniswapUrl = 'https://app.zerozero.markets/#/uni'
   if (!linkVariable) {
     return baseUniswapUrl
   }

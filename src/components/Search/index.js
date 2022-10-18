@@ -436,10 +436,10 @@ export const Search = ({ small = false }) => {
               : below410
               ? 'Search...'
               : below470
-              ? 'Search Zerozero...'
+              ? 'Search zerozero...'
               : below700
               ? 'Search pairs and tokens...'
-              : 'Search Zerozero pairs and tokens...'
+              : 'Search zerozero pairs and tokens...'
           }
           value={value}
           onChange={(e) => {
