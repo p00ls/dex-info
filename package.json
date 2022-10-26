@@ -1,7 +1,7 @@
 {
-  "name": "@uniswap/info",
+  "name": "@p00ls/dex-info",
   "private": true,
-  "homepage": "https://info.uniswap.org",
+  "homepage": "https://info.zerozero.markets",
   "devDependencies": {
     "@popperjs/core": "^2.4.2",
     "@reach/portal": "^0.10.3",
