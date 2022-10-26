@@ -35,7 +35,6 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs:
       - tests
-      - build
     uses: ./.github/workflows/deploy_env.yaml
     concurrency:
       group: devel
