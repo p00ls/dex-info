@@ -32,6 +32,8 @@ jobs:
     environment: ${{ inputs.env }}
     env:
       COMMIT_ID: ${{ inputs.ref == 'latest' && github.sha || inputs.ref }}
+    needs:
+      - build
     permissions:
       contents: 'read'
       id-token: 'write'
