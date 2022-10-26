@@ -1,0 +1,53 @@
+name: Deploy env to bucket
+on:
+  workflow_call:
+    inputs:
+      env:
+        description: environment to deploy
+        required: true
+        type: string
+      ref:
+        description: SHA1 to checkout
+        required: false
+        default: 'latest'
+        type: string
+    secrets:
+      WORKLOAD_IDENTITY_PROVIDER:
+        required: true
+      INFO_GCLOUD_SA:
+        required: true
+      BUCKET_NAME:
+        required: true
+jobs:
+  build:
+    name: Build artifact
+    uses: ./.github/workflows/build.yaml
+    with:
+      env: ${{ inputs.env }}
+    secrets:
+      PACKAGES_ACCESS: ${{ secrets.GITHUB_TOKEN}}
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.env }}
+    env:
+      COMMIT_ID: ${{ inputs.ref == 'latest' && github.sha || inputs.ref }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.COMMIT_ID }}
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.INFO_GCLOUD_SA }}
+      - name: Deploy
+        uses: 'google-github-actions/upload-cloud-storage@v0'
+        with:
+          path: 'build'
+          destination: ${{ secrets.BUCKET_NAME }}
+          parent: false
