@@ -1,0 +1,37 @@
+name: Deploy Prod
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: environment
+        required: true
+        type: choice
+        default: 'prod'
+        options:
+          - 'prod'
+          - 'devel'
+      ref:
+        description: SHA1 to checkout
+        required: false
+        default: 'latest'
+        type: string
+
+jobs:
+  deploy_prod:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/deploy_env.yaml
+    with:
+      env: ${{ inputs.env }}
+      ref: ${{ inputs.ref }}
+    concurrency:
+      group: ${{ inputs.env}}
+      cancel-in-progress: true
+    secrets: inherit
+  purge_fastly:
+    needs: [ deploy_prod ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: jcoene/fastly-purge-action@v1
+        with:
+          api_key: '${{ secrets.FASTLY_API_KEY }}'
+          service_id: '${{ secrets.FASTLY_SERVICE_ID }}'
