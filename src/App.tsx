@@ -13,7 +13,6 @@ import PairPage from './pages/PairPage'
 import TokenPage from './pages/TokenPage'
 import { isAddress } from './utils'
 
-import GoogleAnalyticsReporter from './components/analytics/GoogleAnalyticsReporter'
 import LocalLoader from './components/LocalLoader'
 import SideNav from './components/SideNav'
 import { PAIR_BLACKLIST, TOKEN_BLACKLIST } from './constants'
@@ -172,7 +171,6 @@ function App() {
         globalChartData &&
         Object.keys(globalChartData).length > 0 ? (
           <BrowserRouter>
-            <GoogleAnalyticsReporter />
             <Routes>
               <Route
                 path="/token/:tokenAddress"
