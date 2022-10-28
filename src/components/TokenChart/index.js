@@ -45,7 +45,7 @@ const DATA_FREQUENCY = {
 const TokenChart = ({ address, color, base }) => {
   // settings for the window and candle width
   const [chartFilter, setChartFilter] = useState(CHART_VIEW.PRICE)
-  const [frequency, setFrequency] = useState(DATA_FREQUENCY.HOUR)
+  const [frequency, setFrequency] = useState(DATA_FREQUENCY.LINE)
 
   const [darkMode] = useDarkModeManager()
   const textColor = darkMode ? 'white' : 'black'
